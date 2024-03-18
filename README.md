@@ -1,30 +1,26 @@
-# React + TypeScript + Vite
+# Budgeting Application 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Features
 
-Currently, two official plugins are available:
+- expense tracking: allow users to log expenses with details such as amount, category, date, description
+- income tracking: enable users to track income sources
+- budget planning: allow users to set budgets for different expense categories and track spending against these budgets
+- visualization: provide graphical representations of spending patterns, income sources, and budget adherence to help users understand their financial behavior
+- expense categories: offer predefined or customizable categories for expenses
+- financial goals: allow users to set financial goals
+- reminders and alerts: send users notifications to remind them of upcoming bills ,payments or budget targets
+- multi-device sync: enable user to access their data across any platform
+- security: implement robust security measures, encryption, authentication and authorization mechanisms
+- reports and insights: generated detailed reports of users financial behavior, including spending trends, saving patterns and areas of improvement
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+ 
 
-## Expanding the ESLint configuration
+### Application structure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- user authentication: implement user authentication to allow users to create accounts and securely access their data
+- dashboard: provide a centralized dashboard where user can view an overview of their financial  status
+- transactions management: create interfaces for users to add, delete, edit their financial transactions with options to categorize, annotate and search transactions
+- budget management: develop features for users to set modify and monitor budget limits for different expense categories
+- reports and analysis: design modules for generating reports and analyzing financial data with options for customization and filtering
+- settings: include a settings page where users can customize their account preferences, notification settings and data synchronization
+- help and support: provide resources for users to access help documentation, FAQs, and support channels for assistance with using the application.
