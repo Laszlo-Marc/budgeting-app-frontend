@@ -1,0 +1,18 @@
+{
+  "trailingComma": "all",
+  "jsxSingleQuote": true,
+  "tabWidth": 4,
+  "singleQuote": true,
+  "bracketSpacing": false,
+  "useTabs": false,
+  "endOfLine": "auto",
+  "arrowParens": "always",
+  "semi": true,
+  "max-line-length": [
+    true,
+    {
+      "limit": 140,
+      "ignore-pattern": "^import |^export {(.*?)}^import {BrowserRouter as Router,Route,Switch} from 'react-router-dom'$|^export {BrowserRouter as Router,Route,Switch} from 'react-router-dom'$"
+    }
+  ]
+}
