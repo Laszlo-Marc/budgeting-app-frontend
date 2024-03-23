@@ -1,11 +1,12 @@
-import {create} from '@mui/material/styles/createTransitions';
+import { create } from 'zustand';
 import Expense from '../model/Expenses';
+import { ExpenseList } from '../service/ExpenseAPI';
 
 interface useExpenseStoreProps {
     opened: boolean;
     handleOpen: (expense?: Expense) => void;
     handleClose: () => void;
-    expenses: Expense[];
+    expenses: Expense[]; // Add the 'expenses' property
     deleteExpense: (id: number) => void;
     addExpense: (expense: Expense) => void;
     selectedExpense: Expense | undefined;
@@ -17,7 +18,7 @@ const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     selectedExpense: {} as Expense,
     handleOpen: (expense?: Expense) =>
         set({opened: true, selectedExpense: expense}),
-    editDog: (expense: Expense) => {
+    editExpense: (expense: Expense) => {
         set((state) => ({
             expenses: state.expenses.map((e) =>
                 e.id === expense.id ? expense : e,
@@ -25,9 +26,11 @@ const useExpenseStore = create<useExpenseStoreProps>((set) => ({
         }));
     },
     handleClose: () => set({opened: false, selectedExpense: {} as Expense}),
-    expenses: ExpenseList,
+    expenses: ExpenseList, // Add the 'expenses' property
     addExpense: (expense: Expense) =>
         set((state) => ({expenses: [...state.expenses, expense]})),
-    deleteExpense: (dogId: number) =>
+    deleteExpense: (id: number) =>
         set((state) => ({expenses: state.expenses.filter((e) => e.id !== id)})),
 }));
+
+export default useExpenseStore;

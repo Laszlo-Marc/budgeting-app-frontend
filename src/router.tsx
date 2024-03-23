@@ -1,5 +1,6 @@
-import { Suspense, lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import {Suspense, lazy} from 'react';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+import Layout from './components/Layout';
 
 const AppRouter = () => {
     const Overview = lazy(() => import('./components/Overview'));

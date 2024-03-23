@@ -1,12 +1,14 @@
-import Expense, {Category} from '../model/Expenses';
+import Expense, { Category } from '../model/Expenses';
 
-export const expenses: Expense[] = [
+export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 20,
         date: new Date(),
         description: 'Lunch',
         id: 1,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -14,6 +16,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Bus fare',
         id: 2,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -21,6 +25,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Concert',
         id: 3,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -28,6 +34,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Dinner',
         id: 4,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -35,6 +43,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Taxi fare',
         id: 5,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -42,6 +52,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Movie',
         id: 6,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -49,6 +61,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Lunch',
         id: 7,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -56,6 +70,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Bus fare',
         id: 8,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -63,6 +79,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Concert',
         id: 9,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -70,6 +88,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Dinner',
         id: 10,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -77,6 +97,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Taxi fare',
         id: 11,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -84,6 +106,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Movie',
         id: 12,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -91,6 +115,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Lunch',
         id: 13,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -98,6 +124,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Bus fare',
         id: 14,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -105,6 +133,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Concert',
         id: 15,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -112,6 +142,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Dinner',
         id: 16,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -119,6 +151,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Taxi fare',
         id: 17,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.ENTERTAIMENT,
@@ -126,6 +160,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Movie',
         id: 18,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.FOOD,
@@ -133,6 +169,8 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Lunch',
         id: 19,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
     {
         category: Category.TRANSPORTATION,
@@ -140,5 +178,7 @@ export const expenses: Expense[] = [
         date: new Date(),
         description: 'Bus fare',
         id: 20,
+        account: 'Cash',
+        receiver: 'McDonalds',
     },
 ];

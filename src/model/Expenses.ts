@@ -3,6 +3,8 @@ export default interface Expense {
     amount: number;
     date: Date;
     description: string;
+    account: string;
+    receiver: string;
     id: number;
 }
 export enum Category {
@@ -13,5 +15,3 @@ export enum Category {
     HEALTH = 'Health',
     OTHER = 'Other',
 }
-
-
