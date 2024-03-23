@@ -1,78 +1,92 @@
-import AddIcon from '@mui/icons-material/Add';
-import {
-    Button,
-    Card,
-    CardActionArea,
-    CardActions,
-    CardContent,
-    Grid,
-    IconButton,
-    Typography,
-} from '@mui/material';
+import {Box, Button, ButtonGroup} from '@mui/material';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {useNavigate} from 'react-router-dom';
+
 import useExpenseStore from '../stores/ExpenseStores';
+
 const Overview = () => {
     const navigate = useNavigate();
-    const {expenses, deleteExpense, handleOpen} = useExpenseStore();
+    const {deleteExpense, expenses, handleOpen} = useExpenseStore();
+    const rows = expenses;
+    const columns: GridColDef<(typeof rows)[number]>[] = [
+        {
+            field: 'category',
+            headerName: 'Category',
+            width: 200,
+            editable: true,
+        },
+        {
+            field: 'amount',
+            headerName: 'Amount',
+            type: 'number',
+            width: 100,
+            editable: true,
+        },
+        {
+            field: 'date',
+            headerName: 'Date',
+            type: 'date',
+            width: 100,
+            editable: true,
+        },
+        {
+            field: 'description',
+            headerName: 'Description',
+            sortable: false,
+            width: 300,
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 300,
+            display: 'flex',
+            align: 'right',
+            renderCell: (params) => (
+                <ButtonGroup>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        onClick={() => handleOpen(params.row)}
+                    >
+                        Edit
+                    </Button>
+
+                    <Button
+                        variant='contained'
+                        color='secondary'
+                        onClick={() => deleteExpense(params.row.id)}
+                    >
+                        Delete
+                    </Button>
+
+                    <Button
+                        variant='contained'
+                        color='secondary'
+                        onClick={() => navigate(`/expenses/${params.row.id}`)}
+                    >
+                        Details
+                    </Button>
+                </ButtonGroup>
+            ),
+        },
+    ];
+
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} display={'flex'}>
-                <Grid item xs={10}>
-                    <Typography variant='h4'>Dog Overview</Typography>
-                </Grid>
-                <Grid item xs={2}>
-                    <IconButton onClick={() => handleOpen()} aria-label='add'>
-                        <AddIcon />
-                    </IconButton>
-                </Grid>
-            </Grid>
-            {expenses.map((expense) => (
-                <Grid key={expense.id} item xs={12} md={3}>
-                    <Card sx={{maxWidth: 345}}>
-                        <CardActionArea
-                            onClick={() => navigate(`/dogs/${expense.id}`)}
-                        >
-                            <Typography
-                                gutterBottom
-                                variant='h5'
-                                component='div'
-                            >
-                                {`${expense.category}`}
-                            </Typography>
-                            <CardContent>
-                                <Typography
-                                    gutterBottom
-                                    variant='h5'
-                                    component='div'
-                                >
-                                    {`${expense.amount} - ${expense.date}`}
-                                </Typography>
-                                <Typography
-                                    variant='body2'
-                                    color='text.secondary'
-                                >
-                                    {expense.description}
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                        <CardActions>
-                            <Button
-                                size='small'
-                                onClick={() => deleteExpense(expense.id)}
-                            >
-                                Delete
-                            </Button>
-                            <Button
-                                size='small'
-                                onClick={() => handleOpen(expense)}
-                            >
-                                Edit
-                            </Button>
-                        </CardActions>
-                    </Card>
-                </Grid>
-            ))}
-        </Grid>
+        <Box sx={{height: '100', width: '100%'}}>
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                initialState={{
+                    pagination: {
+                        paginationModel: {
+                            pageSize: 12,
+                        },
+                    },
+                }}
+                pageSizeOptions={[12]}
+                disableRowSelectionOnClick
+            />
+        </Box>
     );
 };
 

@@ -6,9 +6,9 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useEffect } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Category } from '../model/Expenses';
+import {useEffect} from 'react';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {Category} from '../model/Expenses';
 import useExpenseStore from '../stores/ExpenseStores';
 import ReactHookFormSelect from './ReactHookForm';
 
@@ -58,20 +58,15 @@ const ExpenseDialog = () => {
                         <Typography variant='h5'>Add a new expense</Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            label='Category'
-                            fullWidth
-                            {...register('category', {required: true})}
-                        />
                         <ReactHookFormSelect
-                            label='Receiver'
+                            label='Category'
                             control={control}
                             defaultValue={''}
-                            name={'receiver'}
+                            name={'category'}
                         >
-                            {Object.keys(Category).map((breed) => {
+                            {Object.keys(Category).map((category) => {
                                 const value =
-                                    Category[breed as keyof typeof Category];
+                                    Category[category as keyof typeof Category];
                                 return (
                                     <MenuItem key={value} value={value}>
                                         {value}
