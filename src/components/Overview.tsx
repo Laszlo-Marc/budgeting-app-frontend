@@ -1,12 +1,35 @@
-import {Box, Button} from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {useNavigate} from 'react-router-dom';
 
+import {useState} from 'react';
 import useExpenseStore from '../stores/ExpenseStores';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {deleteExpense, expenses, handleOpen} = useExpenseStore();
+    const {expenses, handleOpen, deleteExpense} = useExpenseStore();
+    const [openDialog, setOpenDialog] = useState(false); // State variable to control the visibility of the dialog
+
+    const handleDelete = (expenseId: number) => {
+        deleteExpense(expenseId);
+        setOpenDialog(false); // Close the dialog after deleting the expense
+    };
+
+    const handleDeleteButtonClick = () => {
+        setOpenDialog(true); // Open the dialog when the delete button is clicked
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false); // Close the dialog when the close button is clicked
+    };
     const rows = expenses;
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {
@@ -56,11 +79,11 @@ const Overview = () => {
             width: 100,
             display: 'flex',
             align: 'right',
-            renderCell: (params) => (
+            renderCell: () => (
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => deleteExpense(params.row.id)}
+                    onClick={() => handleDeleteButtonClick()}
                 >
                     Delete
                 </Button>
@@ -101,11 +124,11 @@ const Overview = () => {
                 initialState={{
                     pagination: {
                         paginationModel: {
-                            pageSize: 12,
+                            pageSize: 10,
                         },
                     },
                 }}
-                pageSizeOptions={[12]}
+                pageSizeOptions={[10]}
                 disableRowSelectionOnClick
             />
             <br></br>
@@ -117,6 +140,23 @@ const Overview = () => {
             >
                 Add Expense
             </Button>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                {' '}
+                {/* Dialog component for confirmation */}
+                <DialogTitle>{'Delete expense?'}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id='alert-dialog-slide-description'>
+                        Are you sure you want to delete this expense?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={() => handleDelete(rows[0]?.id)}>
+                        Agree
+                    </Button>{' '}
+                    {/* Pass the expense id to handleDelete */}
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
