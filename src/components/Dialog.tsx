@@ -15,7 +15,7 @@ import ReactHookFormSelect from './ReactHookForm';
 interface Inputs {
     category: string;
     amount: number;
-    date: Date;
+    date: string;
     description: string;
     account: string;
     receiver: string;
@@ -86,7 +86,6 @@ const ExpenseDialog = () => {
                     <Grid item xs={12}>
                         <TextField
                             label='Date'
-                            type='date'
                             fullWidth
                             {...register('date', {required: true})}
                         />

@@ -1,10 +1,16 @@
-import Expense, { Category } from '../model/Expenses';
-
+import Expense, {Category} from '../model/Expenses';
+const calcDate = () => {
+    let yourDate = new Date();
+    yourDate.toISOString().split('T')[0];
+    const offset = yourDate.getTimezoneOffset();
+    yourDate = new Date(yourDate.getTime() - offset * 60 * 1000);
+    return yourDate.toISOString().split('T')[0];
+};
 export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 20,
-        date: new Date(),
+        date: calcDate(),
         description: 'Lunch',
         id: 1,
         account: 'Cash',
@@ -13,7 +19,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Bus fare',
         id: 2,
         account: 'Cash',
@@ -22,7 +28,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Concert',
         id: 3,
         account: 'Cash',
@@ -31,7 +37,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 30,
-        date: new Date(),
+        date: calcDate(),
         description: 'Dinner',
         id: 4,
         account: 'Cash',
@@ -40,7 +46,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Taxi fare',
         id: 5,
         account: 'Cash',
@@ -49,7 +55,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Movie',
         id: 6,
         account: 'Cash',
@@ -58,7 +64,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 20,
-        date: new Date(),
+        date: calcDate(),
         description: 'Lunch',
         id: 7,
         account: 'Cash',
@@ -67,7 +73,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Bus fare',
         id: 8,
         account: 'Cash',
@@ -76,7 +82,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Concert',
         id: 9,
         account: 'Cash',
@@ -85,7 +91,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 30,
-        date: new Date(),
+        date: calcDate(),
         description: 'Dinner',
         id: 10,
         account: 'Cash',
@@ -94,7 +100,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Taxi fare',
         id: 11,
         account: 'Cash',
@@ -103,7 +109,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Movie',
         id: 12,
         account: 'Cash',
@@ -112,7 +118,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 20,
-        date: new Date(),
+        date: calcDate(),
         description: 'Lunch',
         id: 13,
         account: 'Cash',
@@ -121,7 +127,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Bus fare',
         id: 14,
         account: 'Cash',
@@ -130,7 +136,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Concert',
         id: 15,
         account: 'Cash',
@@ -139,7 +145,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 30,
-        date: new Date(),
+        date: calcDate(),
         description: 'Dinner',
         id: 16,
         account: 'Cash',
@@ -148,7 +154,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Taxi fare',
         id: 17,
         account: 'Cash',
@@ -157,7 +163,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.ENTERTAIMENT,
         amount: 100,
-        date: new Date(),
+        date: calcDate(),
         description: 'Movie',
         id: 18,
         account: 'Cash',
@@ -166,7 +172,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
         amount: 20,
-        date: new Date(),
+        date: calcDate(),
         description: 'Lunch',
         id: 19,
         account: 'Cash',
@@ -175,7 +181,7 @@ export const ExpenseList: Expense[] = [
     {
         category: Category.TRANSPORTATION,
         amount: 10,
-        date: new Date(),
+        date: calcDate(),
         description: 'Bus fare',
         id: 20,
         account: 'Cash',

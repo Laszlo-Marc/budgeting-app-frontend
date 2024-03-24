@@ -1,7 +1,7 @@
 export default interface Expense {
     category: string;
     amount: number;
-    date: Date;
+    date: string;
     description: string;
     account: string;
     receiver: string;

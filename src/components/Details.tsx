@@ -3,7 +3,6 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    TextField,
     Typography,
 } from '@mui/material';
 import React, {useState} from 'react';
@@ -32,10 +31,9 @@ const Detail = () => {
                     <Typography>Category</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TextField
-                        disabled={true}
-                        value={expense?.category || ''}
-                    />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.category}
+                    </div>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -47,7 +45,9 @@ const Detail = () => {
                     <Typography>Amount</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TextField disabled={true} value={expense?.amount || ''} />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.amount}
+                    </div>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -59,7 +59,9 @@ const Detail = () => {
                     <Typography>Date</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TextField disabled={true} value={expense?.date || ''} />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.date?.toString()}
+                    </div>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -71,10 +73,9 @@ const Detail = () => {
                     <Typography>Description</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TextField
-                        disabled={true}
-                        value={expense?.description || ''}
-                    />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.description}
+                    </div>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -86,7 +87,9 @@ const Detail = () => {
                     <Typography>Account</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <TextField disabled={true} value={expense?.account || ''} />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.account}
+                    </div>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -98,10 +101,9 @@ const Detail = () => {
                     <Typography>Receiver</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography
-                        disabled={true}
-                        value={expense?.receiver || ''}
-                    />
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                        {expense?.receiver}
+                    </div>
                 </AccordionDetails>
             </Accordion>
         </div>
