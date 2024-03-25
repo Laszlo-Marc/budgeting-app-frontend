@@ -157,6 +157,15 @@ const Overview = () => {
                     {/* Pass the expense id to handleDelete */}
                 </DialogActions>
             </Dialog>
+            <br></br>
+            <Button
+                variant='contained'
+                color='primary'
+                size='large'
+                onClick={() => navigate('/chart')}
+            >
+                View Chart
+            </Button>
         </Box>
     );
 };
