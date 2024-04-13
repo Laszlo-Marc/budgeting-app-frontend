@@ -8,29 +8,36 @@ import {
     DialogTitle,
 } from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import axios from 'axios';
+import {useContext, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-
-import {useState} from 'react';
-import useExpenseStore from '../stores/ExpenseStores';
+import {ExpenseContext} from '../contexts/Context';
+import {useExpenseStore} from '../stores/ExpenseStores';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {expenses, handleOpen, deleteExpense} = useExpenseStore();
     const [openDialog, setOpenDialog] = useState(false); // State variable to control the visibility of the dialog
-
-    const handleDelete = (expenseId: number) => {
-        deleteExpense(expenseId);
-        setOpenDialog(false); // Close the dialog after deleting the expense
-    };
-
-    const handleDeleteButtonClick = () => {
-        setOpenDialog(true); // Open the dialog when the delete button is clicked
-    };
+    const expenseContext = useContext(ExpenseContext);
+    const {handleOpen} = useExpenseStore();
 
     const handleCloseDialog = () => {
         setOpenDialog(false); // Close the dialog when the close button is clicked
     };
-    const rows = expenses;
+    const handleDelete = (expenseId: number) => {
+        console.log('Deleting expense');
+        axios.delete(`http://localhost:3001/api/expenses/${expenseId}`);
+        expenseContext?.deleteExpense(expenseId);
+        console.log('Expense deleted');
+        console.log('Closing dialog');
+        setOpenDialog(false);
+    };
+    const handleDeleteButtonClick = () => {
+        console.log('Delete button clicked');
+        setOpenDialog(true);
+    };
+
+    const rows = expenseContext?.expenses || [];
+
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {
             field: 'category',
@@ -48,7 +55,7 @@ const Overview = () => {
         {
             field: 'date',
             headerName: 'Date',
-            width: 100,
+            width: 150,
             editable: false,
         },
         {
@@ -67,7 +74,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='primary'
-                    onClick={() => handleOpen(params.row)}
+                    onClick={() => handleOpen(params.row.getId())}
                 >
                     Edit
                 </Button>
@@ -99,7 +106,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => navigate(`/expenses/${params.row.id}`)}
+                    onClick={() => navigate(`/expenses/${params.row.getId()}`)}
                 >
                     Details
                 </Button>
@@ -151,7 +158,7 @@ const Overview = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog}>Disagree</Button>
-                    <Button onClick={() => handleDelete(rows[0]?.id)}>
+                    <Button onClick={() => handleDelete(rows[0]?.getId())}>
                         Agree
                     </Button>{' '}
                     {/* Pass the expense id to handleDelete */}

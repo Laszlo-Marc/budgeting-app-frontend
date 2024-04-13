@@ -1,5 +1,5 @@
-import {render} from '@testing-library/react';
-import {vi} from 'vitest';
+import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import ExpenseDialog from './Dialog';
 vi.mock('react-router-dom', () => ({
     ...require('react-router-dom'),
@@ -7,7 +7,7 @@ vi.mock('react-router-dom', () => ({
 }));
 describe('render ExpenseDialog component corectly', () => {
     it('should render ExpenseDialog component correctly', () => {
-        const {container} = render(<ExpenseDialog />);
+        const {container} = render(<ExpenseDialog  />);
         expect(container.firstChild).toMatchSnapshot();
     });
 });

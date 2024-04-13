@@ -1,4 +1,4 @@
-import Expense, {Category} from '../model/Expenses';
+/*
 const calcDate = () => {
     let yourDate = new Date();
     yourDate.toISOString().split('T')[0];
@@ -6,6 +6,7 @@ const calcDate = () => {
     yourDate = new Date(yourDate.getTime() - offset * 60 * 1000);
     return yourDate.toISOString().split('T')[0];
 };
+
 export const ExpenseList: Expense[] = [
     {
         category: Category.FOOD,
@@ -188,3 +189,4 @@ export const ExpenseList: Expense[] = [
         receiver: 'McDonalds',
     },
 ];
+*/

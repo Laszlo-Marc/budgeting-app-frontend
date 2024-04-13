@@ -5,19 +5,21 @@ import {
     AccordionSummary,
     Typography,
 } from '@mui/material';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import Expense from '../model/Expenses';
-import useExpenseStore from '../stores/ExpenseStores';
+import {ExpenseContext} from '../contexts/Context';
+import {Expense} from '../model/Expenses';
 
 const Detail = () => {
     const params = useParams();
     const [expense, setExpense] = useState<Expense | undefined>(undefined);
-    const {expenses} = useExpenseStore();
+    const expenseContext = useContext(ExpenseContext);
     React.useEffect(() => {
         if (params.id)
             setExpense(
-                expenses.find((expense) => expense.id === parseInt(params.id!)),
+                expenseContext?.expenses.find(
+                    (expense) => expense.getId() === parseInt(params.id!),
+                ),
             );
     }, []);
     return (
@@ -32,7 +34,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.category}
+                        {expense?.getCategory()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -46,7 +48,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.amount}
+                        {expense?.getAmount()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -60,7 +62,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.date?.toString()}
+                        {expense?.getDate()?.toString()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -74,7 +76,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.description}
+                        {expense?.getDescription()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -88,7 +90,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.account}
+                        {expense?.getAccount()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -102,7 +104,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.receiver}
+                        {expense?.getReceiver()}
                     </div>
                 </AccordionDetails>
             </Accordion>

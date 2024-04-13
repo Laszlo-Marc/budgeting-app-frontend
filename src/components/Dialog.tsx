@@ -7,10 +7,12 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import {useEffect} from 'react';
+import axios from 'axios';
+import {useContext, useEffect} from 'react';
 import {SubmitHandler, useForm} from 'react-hook-form';
+import {ExpenseContext} from '../contexts/Context';
 import {Category} from '../model/Expenses';
-import useExpenseStore from '../stores/ExpenseStores';
+import {useExpenseStore} from '../stores/ExpenseStores';
 import ReactHookFormSelect from './ReactHookForm';
 
 interface Inputs {
@@ -21,30 +23,70 @@ interface Inputs {
     account: string;
     receiver: string;
 }
-const ExpenseDialog = () => {
-    const {opened, handleClose, addExpense, selectedExpense, editExpense} =
-        useExpenseStore();
-    const {register, handleSubmit, control, reset} = useForm<Inputs>({});
 
+const ExpenseDialog = () => {
+    const {opened, handleClose, selectedExpenseId} = useExpenseStore();
+    const {register, handleSubmit, control, reset} = useForm<Inputs>({});
+    const expenseContext = useContext(ExpenseContext);
     useEffect(() => {
-        reset(selectedExpense);
-    }, [selectedExpense]);
+        const fetchExpenseDetails = async () => {
+            if (selectedExpenseId !== null) {
+                try {
+                    // Fetch the expense details based on selectedExpenseId
+                    const expense =
+                        expenseContext?.getExpenseById(selectedExpenseId);
+                    if (expense) {
+                        // Populate the form fields with fetched expense details
+                        reset({
+                            category: expense.getCategory(),
+                            amount: expense.getAmount(),
+                            date: expense.getDate(),
+                            description: expense.getDescription(),
+                            account: expense.getAccount(),
+                            receiver: expense.getReceiver(),
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching expense details:', error);
+                }
+            } else {
+                // Clear the form fields for adding a new expense
+                reset();
+            }
+        };
+
+        fetchExpenseDetails();
+    }, [selectedExpenseId, reset, expenseContext]);
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        if (selectedExpense) {
-            editExpense({
-                ...selectedExpense,
-                ...data,
-            });
+        if (selectedExpenseId !== null) {
+            try {
+                axios
+                    .put(
+                        `http://localhost:3001/api/expenses/${selectedExpenseId}`,
+                        data,
+                    )
+                    .then((response) => {
+                        expenseContext?.deleteExpense(selectedExpenseId);
+                        expenseContext?.addExpense(response.data as any);
+                    });
+            } catch (error) {
+                console.error('Error editing expense:', error);
+            }
         } else {
-            addExpense({
-                id: Math.floor(Math.random() * 1000),
-                ...data,
-            });
+            axios
+                .post('http://localhost:3001/api/expenses', data)
+                .then((response) => {
+                    expenseContext?.addExpense(response.data as any);
+                })
+                .catch((error) => {
+                    console.error('Error adding expense:', error);
+                });
         }
         reset();
         handleClose();
     };
+
     return (
         <Dialog
             open={opened}
