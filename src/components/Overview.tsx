@@ -8,12 +8,12 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Expense } from '../model/Expenses';
-import { useExpenseStore } from '../stores/ExpenseStores';
+import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Expense} from '../model/Expenses';
+import {useExpenseStore} from '../stores/ExpenseStores';
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -21,6 +21,23 @@ const Overview = () => {
     const {setSelctedExpenseId, handleOpen} = useExpenseStore();
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [expenseToDelete, setExpenseToDelete] = useState<Expense>();
+    const [isOnline, setIsOnline] = useState<boolean>(true);
+
+    const checkInternetStatus = async () => {
+        try {
+            const response = await axios.get(
+                'http://localhost:3001/api/check-internet',
+            );
+            setIsOnline(response.data.isOnline);
+            if (!response.data.isOnline) {
+                // Alert the user that the internet connection is down
+                alert('Internet connection is down!');
+            }
+        } catch (error) {
+            setIsOnline(false); // If there's an error, assume offline
+            alert('Internet connection is down!');
+        }
+    };
     const fetchExpenses = () => {
         axios
             .get('http://localhost:3001/api/expenses')
@@ -43,6 +60,12 @@ const Overview = () => {
                 console.error('Error fetching expenses:', error);
             });
     };
+    useEffect(() => {
+        checkInternetStatus();
+        const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
+        return () => clearInterval(interval);
+    });
+    console.log(isOnline);
     useEffect(() => {
         fetchExpenses();
     }, []);

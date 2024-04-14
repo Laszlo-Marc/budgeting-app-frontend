@@ -1,11 +1,37 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box} from '@mui/material';
 import {PieChart} from '@mui/x-charts/PieChart';
-import {useContext} from 'react';
-import {ExpenseContext} from '../contexts/Context';
-import {Category} from '../model/Expenses';
+import axios from 'axios';
+import {useEffect, useState} from 'react';
+import {Category, Expense} from '../model/Expenses';
 function CalculateTotal(category: Category) {
-    const expenseContext = useContext(ExpenseContext);
-    const total = expenseContext?.expenses.reduce((acc, curr) => {
+    const [expenses, setExpenses] = useState<Expense[]>([]);
+    const fetchExpenses = () => {
+        axios
+            .get('http://localhost:3001/api/expenses')
+            .then((response) => {
+                const expenses = response.data.map(
+                    (expense: any) =>
+                        new Expense(
+                            expense.id,
+                            expense.category,
+                            expense.amount,
+                            expense.date,
+                            expense.description,
+                            expense.account,
+                            expense.receiver,
+                        ),
+                );
+                setExpenses(expenses);
+            })
+            .catch((error) => {
+                console.error('Error fetching expenses:', error);
+            });
+    };
+    useEffect(() => {
+        fetchExpenses();
+    }, []);
+    const total = expenses.reduce((acc, curr) => {
         if (curr.getCategory() === category) {
             return acc + curr.getAmount();
         }
