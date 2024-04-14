@@ -5,23 +5,42 @@ import {
     AccordionSummary,
     Typography,
 } from '@mui/material';
-import React, {useContext, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {ExpenseContext} from '../contexts/Context';
+import axios from 'axios';
+import {useEffect, useState} from 'react';
 import {Expense} from '../model/Expenses';
+import {useExpenseStore} from '../stores/ExpenseStores';
 
 const Detail = () => {
-    const params = useParams();
     const [expense, setExpense] = useState<Expense | undefined>(undefined);
-    const expenseContext = useContext(ExpenseContext);
-    React.useEffect(() => {
-        if (params.id)
-            setExpense(
-                expenseContext?.expenses.find(
-                    (expense) => expense.getId() === parseInt(params.id!),
-                ),
-            );
-    }, []);
+    const {selectedExpenseId} = useExpenseStore();
+
+    useEffect(() => {
+        fetchExpenseDetails();
+    }, [selectedExpenseId]); // Re-fetch details when selectedExpenseId changes
+
+    const fetchExpenseDetails = async () => {
+        if (selectedExpenseId !== null) {
+            try {
+                const response = await axios.get(
+                    `http://localhost:3001/api/expenses/${selectedExpenseId}`,
+                );
+                const expenseData = response.data;
+                const expense = new Expense(
+                    expenseData.id,
+                    expenseData.category,
+                    expenseData.amount,
+                    expenseData.date,
+                    expenseData.description,
+                    expenseData.account,
+                    expenseData.receiver,
+                );
+                setExpense(expense);
+            } catch (error) {
+                console.error('Error fetching expense details:', error);
+            }
+        }
+    };
+
     return (
         <div>
             <Accordion>

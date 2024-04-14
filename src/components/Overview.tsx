@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Box,
     Button,
@@ -7,36 +8,69 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import axios from 'axios';
-import {useContext, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {ExpenseContext} from '../contexts/Context';
-import {useExpenseStore} from '../stores/ExpenseStores';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Expense } from '../model/Expenses';
+import { useExpenseStore } from '../stores/ExpenseStores';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const [openDialog, setOpenDialog] = useState(false); // State variable to control the visibility of the dialog
-    const expenseContext = useContext(ExpenseContext);
-    const {handleOpen} = useExpenseStore();
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false); // Close the dialog when the close button is clicked
+    const [openDialog, setOpenDialog] = useState(false);
+    const {setSelctedExpenseId, handleOpen} = useExpenseStore();
+    const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [expenseToDelete, setExpenseToDelete] = useState<Expense>();
+    const fetchExpenses = () => {
+        axios
+            .get('http://localhost:3001/api/expenses')
+            .then((response) => {
+                const expenses = response.data.map(
+                    (expense: any) =>
+                        new Expense(
+                            expense.id,
+                            expense.category,
+                            expense.amount,
+                            expense.date,
+                            expense.description,
+                            expense.account,
+                            expense.receiver,
+                        ),
+                );
+                setExpenses(expenses);
+            })
+            .catch((error) => {
+                console.error('Error fetching expenses:', error);
+            });
     };
-    const handleDelete = (expenseId: number) => {
-        console.log('Deleting expense');
-        axios.delete(`http://localhost:3001/api/expenses/${expenseId}`);
-        expenseContext?.deleteExpense(expenseId);
-        console.log('Expense deleted');
-        console.log('Closing dialog');
+    useEffect(() => {
+        fetchExpenses();
+    }, []);
+    const handleCloseDialog = () => {
         setOpenDialog(false);
     };
-    const handleDeleteButtonClick = () => {
-        console.log('Delete button clicked');
+    const handleDelete = async (expense: Expense) => {
+        try {
+            await axios.delete(
+                `http://localhost:3001/api/expenses/${expense.getId()}`,
+            );
+            fetchExpenses();
+            setOpenDialog(false);
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+        }
+    };
+    const handleDeleteButtonClick = (expenseId: number | undefined) => {
+        setExpenseToDelete(
+            expenses.find((expense) => expense.getId() === expenseId),
+        );
         setOpenDialog(true);
     };
-
-    const rows = expenseContext?.expenses || [];
+    const handleDetail = (expenseId: number | undefined) => {
+        setSelctedExpenseId(expenseId);
+        navigate(`/expenses/${expenseId}`);
+    };
+    const rows = expenses || [];
 
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {
@@ -86,11 +120,11 @@ const Overview = () => {
             width: 100,
             display: 'flex',
             align: 'right',
-            renderCell: () => (
+            renderCell: (params) => (
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => handleDeleteButtonClick()}
+                    onClick={() => handleDeleteButtonClick(params.row.getId())}
                 >
                     Delete
                 </Button>
@@ -106,7 +140,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => navigate(`/expenses/${params.row.getId()}`)}
+                    onClick={() => handleDetail(params.row.getId())}
                 >
                     Details
                 </Button>
@@ -157,8 +191,12 @@ const Overview = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog}>Disagree</Button>
-                    <Button onClick={() => handleDelete(rows[0]?.getId())}>
+                    <Button>Disagree</Button>
+                    <Button
+                        onClick={() =>
+                            expenseToDelete && handleDelete(expenseToDelete)
+                        }
+                    >
                         Agree
                     </Button>{' '}
                     {/* Pass the expense id to handleDelete */}
