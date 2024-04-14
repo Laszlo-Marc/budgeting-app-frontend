@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {ExpandMore} from '@mui/icons-material';
 import {
     Accordion,
@@ -16,8 +17,7 @@ const Detail = () => {
 
     useEffect(() => {
         fetchExpenseDetails();
-    }, [selectedExpenseId]); // Re-fetch details when selectedExpenseId changes
-
+    }, [selectedExpenseId]);
     const fetchExpenseDetails = async () => {
         if (selectedExpenseId !== null) {
             try {

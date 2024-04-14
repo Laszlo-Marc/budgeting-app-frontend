@@ -14,6 +14,7 @@ const AppRouter = () => {
         axios
             .get('http://localhost:3001/api/expenses')
             .then((response) => {
+                console.log(response.data);
                 const expenses = response.data.map(
                     (expense: any) =>
                         new Expense(

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Button,
@@ -8,10 +9,10 @@ import {
     Typography,
 } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Category, Expense } from '../model/Expenses';
-import { useExpenseStore } from '../stores/ExpenseStores';
+import {useEffect, useState} from 'react';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {Category, Expense} from '../model/Expenses';
+import {useExpenseStore} from '../stores/ExpenseStores';
 import ReactHookFormSelect from './ReactHookForm';
 
 interface Inputs {
