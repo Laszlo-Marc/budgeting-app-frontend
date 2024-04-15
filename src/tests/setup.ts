@@ -1,8 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
-
-// runs a clean after each test case (e.g. clearing jsdom)
+import {cleanup} from '@testing-library/react';
+import {afterEach, vi} from 'vitest';
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: any) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(), // deprecated
+        removeListener: vi.fn(), // deprecated
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
+vi.mock('react-router-dom', () => ({
+    ...require('react-router-dom'),
+    useNavigate: () => vi.fn(),
+}));
 afterEach(() => {
-  cleanup();
-})
+    cleanup();
+});
