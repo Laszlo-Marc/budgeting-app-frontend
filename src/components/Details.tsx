@@ -6,41 +6,21 @@ import {
     AccordionSummary,
     Typography,
 } from '@mui/material';
-import axios from 'axios';
 import {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import {Expense} from '../model/Expenses';
 import {useExpenseStore} from '../stores/ExpenseStores';
 
 const Detail = () => {
     const [expense, setExpense] = useState<Expense | undefined>(undefined);
-    const {selectedExpenseId} = useExpenseStore();
-
+    const {expenses} = useExpenseStore();
+    const params = useParams();
     useEffect(() => {
-        fetchExpenseDetails();
-    }, [selectedExpenseId]);
-    const fetchExpenseDetails = async () => {
-        if (selectedExpenseId !== null) {
-            try {
-                const response = await axios.get(
-                    `http://localhost:3001/api/expenses/${selectedExpenseId}`,
-                );
-                const expenseData = response.data;
-                const expense = new Expense(
-                    expenseData.id,
-                    expenseData.category,
-                    expenseData.amount,
-                    expenseData.date,
-                    expenseData.description,
-                    expenseData.account,
-                    expenseData.receiver,
-                );
-                setExpense(expense);
-            } catch (error) {
-                console.error('Error fetching expense details:', error);
-            }
-        }
-    };
-
+        if (params.id)
+            setExpense(
+                expenses.find((expense) => expense.id === parseInt(params.id!)),
+            );
+    }, [params.id]);
     return (
         <div>
             <Accordion>
@@ -53,7 +33,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getCategory()}
+                        {expense?.category}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -67,7 +47,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getAmount()}
+                        {expense?.amount}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -81,7 +61,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getDate()?.toString()}
+                        {expense?.date?.toString()}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -95,7 +75,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getDescription()}
+                        {expense?.description}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -109,7 +89,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getAccount()}
+                        {expense?.account}
                     </div>
                 </AccordionDetails>
             </Accordion>
@@ -123,7 +103,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.getReceiver()}
+                        {expense?.receiver}
                     </div>
                 </AccordionDetails>
             </Accordion>

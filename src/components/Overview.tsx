@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-} from '@mui/material';
+import {Box, Button} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
@@ -17,10 +9,7 @@ import {useExpenseStore} from '../stores/ExpenseStores';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const [openDialog, setOpenDialog] = useState(false);
-    const {setSelctedExpenseId, handleOpen} = useExpenseStore();
-    const [expenses, setExpenses] = useState<Expense[]>([]);
-    const [expenseToDelete, setExpenseToDelete] = useState<Expense>();
+    const {handleOpen, deleteExpense, expenses} = useExpenseStore();
     const [isOnline, setIsOnline] = useState<boolean>(true);
 
     const checkInternetStatus = async () => {
@@ -38,63 +27,48 @@ const Overview = () => {
             alert('Internet connection is down!');
         }
     };
-    const fetchExpenses = () => {
-        axios
-            .get('http://localhost:3001/api/expenses')
-            .then((response) => {
-                const expenses = response.data.map(
-                    (expense: any) =>
-                        new Expense(
-                            expense.id,
-                            expense.category,
-                            expense.amount,
-                            expense.date,
-                            expense.description,
-                            expense.account,
-                            expense.receiver,
-                        ),
-                );
-                setExpenses(expenses);
-            })
-            .catch((error) => {
-                console.error('Error fetching expenses:', error);
-            });
-    };
     useEffect(() => {
         checkInternetStatus();
         const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
         return () => clearInterval(interval);
     });
     console.log(isOnline);
-    useEffect(() => {
-        fetchExpenses();
-    }, []);
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
-    const handleDelete = async (expense: Expense) => {
-        try {
-            await axios.delete(
-                `http://localhost:3001/api/expenses/${expense.getId()}`,
-            );
-            fetchExpenses();
-            setOpenDialog(false);
-        } catch (error) {
-            console.error('Error deleting expense:', error);
-        }
-    };
-    const handleDeleteButtonClick = (expenseId: number | undefined) => {
-        setExpenseToDelete(
-            expenses.find((expense) => expense.getId() === expenseId),
-        );
-        setOpenDialog(true);
-    };
-    const handleDetail = (expenseId: number | undefined) => {
-        setSelctedExpenseId(expenseId);
-        navigate(`/expenses/${expenseId}`);
-    };
-    const rows = expenses || [];
 
+    // const socket = new WebSocket('ws://localhost:3000');
+
+    // // Connection opened
+    // socket.addEventListener('open', () => {
+    //     socket.send('Connection established');
+    // });
+
+    // // Listen for messages
+    // socket.addEventListener('message', (event) => {
+    //     console.log('Message from server ', event.data);
+    //     if (event.data === 'refresh') {
+    //         fetchDataAndUpdateRows();
+    //     }
+    // });
+    // const sendMessage = () => {
+    //     socket.send('hello from frontend');
+    // };
+    // const fetchDataAndUpdateRows = async () => {
+    //     try {
+    //         const response = await axios.get(
+    //             'http://localhost:5050/api/foods/',
+    //         );
+    //         setRows(response.data);
+    //     } catch (error) {
+    //         console.error('Error fetching data:', error);
+    //     }
+    // };
+    const handleDelete = (expense: Expense) => {
+        deleteExpense(expense);
+    };
+    const handleDetails = (expense: Expense) => {
+        navigate(`/expenses/${expense.id}`);
+    };
+    const rows = expenses;
+    console.log(rows);
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {
             field: 'category',
@@ -131,7 +105,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='primary'
-                    onClick={() => handleOpen(params.row.getId())}
+                    onClick={() => handleOpen(params.row)}
                 >
                     Edit
                 </Button>
@@ -147,7 +121,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => handleDeleteButtonClick(params.row.getId())}
+                    onClick={() => handleDelete(params.row)}
                 >
                     Delete
                 </Button>
@@ -163,7 +137,7 @@ const Overview = () => {
                 <Button
                     variant='contained'
                     color='secondary'
-                    onClick={() => handleDetail(params.row.getId())}
+                    onClick={() => handleDetails(params.row)}
                 >
                     Details
                 </Button>
@@ -204,9 +178,24 @@ const Overview = () => {
             >
                 Add Expense
             </Button>
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-                {' '}
-                {/* Dialog component for confirmation */}
+            {/* <Button
+                variant='outlined'
+                sx={{
+                    color: 'green',
+                    borderColor: 'green',
+                    '&:hover': {
+                        backgroundColor: 'green',
+                        color: 'white',
+                    },
+                }}
+                onClick={() => {
+                    sendMessage();
+                }}
+            >
+                Send message w web sockets
+            </Button> */}
+            {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
+              
                 <DialogTitle>{'Delete expense?'}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id='alert-dialog-slide-description'>
@@ -222,9 +211,9 @@ const Overview = () => {
                     >
                         Agree
                     </Button>{' '}
-                    {/* Pass the expense id to handleDelete */}
+                   
                 </DialogActions>
-            </Dialog>
+            </Dialog>  */}
             <br></br>
             <Button
                 variant='contained'

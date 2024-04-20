@@ -8,10 +8,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import axios from 'axios';
-import {useEffect, useState} from 'react';
 import {SubmitHandler, useForm} from 'react-hook-form';
-import {Category, Expense} from '../model/Expenses';
+import {Category} from '../model/Expenses';
 import {useExpenseStore} from '../stores/ExpenseStores';
 import ReactHookFormSelect from './ReactHookForm';
 
@@ -25,83 +23,28 @@ interface Inputs {
 }
 
 const ExpenseDialog = () => {
-    const {opened, handleClose, selectedExpenseId} = useExpenseStore();
+    const {opened, handleClose, selectedExpense, addExpense, editExpense} =
+        useExpenseStore();
     const {register, handleSubmit, control, reset} = useForm<Inputs>({});
-    const [, setExpense] = useState<Expense>();
-    const [, setExpenses] = useState<Expense[]>([]);
-    const fetchExpenses = () => {
-        axios
-            .get('http://localhost:3001/api/expenses')
-            .then((response) => {
-                const expenses = response.data.map(
-                    (expense: any) =>
-                        new Expense(
-                            expense.id,
-                            expense.category,
-                            expense.amount,
-                            expense.date,
-                            expense.description,
-                            expense.account,
-                            expense.receiver,
-                        ),
-                );
-                setExpenses(expenses);
-            })
-            .catch((error) => {
-                console.error('Error fetching expenses:', error);
-            });
-    };
-    useEffect(() => {
-        fetchExpenses();
-    }, []);
-    const fetchExpenseDetails = async () => {
-        if (selectedExpenseId !== null) {
-            try {
-                const response = await axios.get(
-                    'http://localhost:3001/api/expenses',
-                );
-                const expense = response.data;
-                setExpense(expense);
-            } catch (error) {
-                console.error('Error fetching expenses:', error);
-            }
-        } else {
-            reset();
-        }
-    };
-
-    useEffect(() => {
-        fetchExpenseDetails();
-    }, []);
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
-        if (selectedExpenseId) {
-            axios
-                .put(
-                    `http://localhost:3001/api/expenses/${selectedExpenseId}`,
-                    data,
-                )
-                .then(() => {
-                    fetchExpenseDetails();
-                    handleClose();
-                    fetchExpenses();
-                })
-                .catch((error) => {
-                    console.error('Error updating expense:', error);
-                });
+        if (selectedExpense) {
+            editExpense(selectedExpense);
+            reset();
+            handleClose();
         } else {
-            axios
-                .post('http://localhost:3001/api/expenses', data)
-                .then(() => {
-                    fetchExpenseDetails();
-                    handleClose();
-                    fetchExpenses();
-                })
-                .catch((error) => {
-                    console.error('Error adding expense:', error);
-                });
+            addExpense({
+                id: Math.floor(Math.random() * 1000),
+                category: data.category as Category,
+                amount: data.amount,
+                date: new Date(data.date),
+                description: data.description,
+                account: data.account,
+                receiver: data.receiver,
+            });
+            reset();
+            handleClose();
         }
-        handleClose();
     };
 
     return (
