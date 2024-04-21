@@ -1,4 +1,4 @@
-import ExpenseDialog from './Dialog';
+import ExpenseDialog from './expenseComponents/Dialog';
 
 interface LayoutProps {
     children: React.ReactNode;

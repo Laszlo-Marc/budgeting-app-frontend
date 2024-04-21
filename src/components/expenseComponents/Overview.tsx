@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Button} from '@mui/material';
+import {Box, Button, Grid} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Expense} from '../model/Expenses';
-import {useExpenseStore} from '../stores/ExpenseStores';
+import {Expense} from '../../model/Expenses';
+import {useExpenseStore} from '../../stores/ExpenseStores';
+import {useUserStore} from '../../stores/UserStore';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {handleOpen, deleteExpense, expenses} = useExpenseStore();
-    const [isOnline, setIsOnline] = useState<boolean>(true);
-
+    const {handleOpen, deleteExpense} = useExpenseStore();
+    const [, setIsOnline] = useState<boolean>(true);
+    const {selectedUser} = useUserStore();
     const checkInternetStatus = async () => {
         try {
             const response = await axios.get(
@@ -32,7 +33,6 @@ const Overview = () => {
         const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
         return () => clearInterval(interval);
     });
-    console.log(isOnline);
 
     // const socket = new WebSocket('ws://localhost:3000');
 
@@ -67,8 +67,8 @@ const Overview = () => {
     const handleDetails = (expense: Expense) => {
         navigate(`/expenses/${expense.id}`);
     };
-    const rows = expenses;
-    console.log(rows);
+    const rows = selectedUser.expenses || [];
+
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {
             field: 'category',
@@ -146,84 +146,61 @@ const Overview = () => {
     ];
 
     return (
-        <Box
-            sx={{
-                height: '100',
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
-        >
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{
-                    pagination: {
-                        paginationModel: {
-                            pageSize: 10,
-                        },
-                    },
-                }}
-                pageSizeOptions={[10]}
-                disableRowSelectionOnClick
-            />
-            <br></br>
-            <Button
-                variant='contained'
-                color='primary'
-                size='large'
-                onClick={() => handleOpen()}
-            >
-                Add Expense
-            </Button>
-            {/* <Button
-                variant='outlined'
-                sx={{
-                    color: 'green',
-                    borderColor: 'green',
-                    '&:hover': {
-                        backgroundColor: 'green',
-                        color: 'white',
-                    },
-                }}
-                onClick={() => {
-                    sendMessage();
-                }}
-            >
-                Send message w web sockets
-            </Button> */}
-            {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
-              
-                <DialogTitle>{'Delete expense?'}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id='alert-dialog-slide-description'>
-                        Are you sure you want to delete this expense?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button>Disagree</Button>
+        <Grid container spacing={2}>
+            <Grid item xs={12} md={3}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        justifyContent: 'flex-start',
+                    }}
+                >
                     <Button
-                        onClick={() =>
-                            expenseToDelete && handleDelete(expenseToDelete)
-                        }
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={() => handleOpen()}
                     >
-                        Agree
-                    </Button>{' '}
-                   
-                </DialogActions>
-            </Dialog>  */}
-            <br></br>
-            <Button
-                variant='contained'
-                color='primary'
-                size='large'
-                onClick={() => navigate('/chart')}
-            >
-                View Chart
-            </Button>
-        </Box>
+                        Add Expense
+                    </Button>
+                    <br />
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={() => navigate('/chart')}
+                    >
+                        View Chart
+                    </Button>
+                </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Box
+                    sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: 100,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[100]}
+                        disableRowSelectionOnClick
+                    />
+                </Box>
+            </Grid>
+        </Grid>
     );
 };
 

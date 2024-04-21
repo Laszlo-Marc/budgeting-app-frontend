@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {render} from '@testing-library/react';
 import {vi} from 'vitest';
-import BasicPie from '../components/Chart';
+import BasicPie from '../components/expenseComponents/Chart';
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: any) => ({

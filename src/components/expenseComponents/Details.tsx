@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Expense} from '../model/Expenses';
-import {useExpenseStore} from '../stores/ExpenseStores';
+import {Expense} from '../../model/Expenses';
+import {useExpenseStore} from '../../stores/ExpenseStores';
 
 const Detail = () => {
     const [expense, setExpense] = useState<Expense | undefined>(undefined);

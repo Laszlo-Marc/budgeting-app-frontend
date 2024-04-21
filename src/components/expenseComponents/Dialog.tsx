@@ -9,9 +9,9 @@ import {
     Typography,
 } from '@mui/material';
 import {SubmitHandler, useForm} from 'react-hook-form';
-import {Category} from '../model/Expenses';
-import {useExpenseStore} from '../stores/ExpenseStores';
-import ReactHookFormSelect from './ReactHookForm';
+import {Category} from '../../model/Expenses';
+import {useExpenseStore} from '../../stores/ExpenseStores';
+import ReactHookFormSelect from '../ReactHookForm';
 
 interface Inputs {
     category: string;
@@ -29,15 +29,26 @@ const ExpenseDialog = () => {
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
         if (selectedExpense) {
-            editExpense(selectedExpense);
+            console.log('edit');
+            console.log(selectedExpense);
+            const updatedExpense = {
+                id: selectedExpense.id,
+                category: data.category as Category,
+                amount: data.amount,
+                date: data.date.split('T')[0],
+                description: data.description,
+                receiver: data.receiver,
+                account: data.account,
+            };
             reset();
             handleClose();
+            editExpense(updatedExpense);
         } else {
             addExpense({
                 id: Math.floor(Math.random() * 1000),
                 category: data.category as Category,
                 amount: data.amount,
-                date: new Date(data.date),
+                date: data.date.split('T')[0],
                 description: data.description,
                 account: data.account,
                 receiver: data.receiver,
@@ -58,13 +69,17 @@ const ExpenseDialog = () => {
             <form style={{padding: 16}} onSubmit={handleSubmit(onSubmit)}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant='h5'>Add a new expense</Typography>
+                        <Typography variant='h5'>
+                            {selectedExpense
+                                ? 'Edit Expense'
+                                : 'Add a new expense'}
+                        </Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <ReactHookFormSelect
                             label='Category'
                             control={control}
-                            defaultValue={''}
+                            defaultValue={selectedExpense?.category || ''}
                             name={'category'}
                         >
                             {Object.keys(Category).map((category) => {
@@ -80,17 +95,20 @@ const ExpenseDialog = () => {
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            label='Ammount'
+                            label='Amount'
                             type='number'
                             fullWidth
                             {...register('amount', {required: true})}
+                            defaultValue={selectedExpense?.amount || ''}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
                             label='Date'
+                            type='date'
                             fullWidth
                             {...register('date', {required: true})}
+                            defaultValue={selectedExpense?.date || ''}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -98,6 +116,7 @@ const ExpenseDialog = () => {
                             label='Description'
                             fullWidth
                             {...register('description', {required: true})}
+                            defaultValue={selectedExpense?.description || ''}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -105,6 +124,7 @@ const ExpenseDialog = () => {
                             label='Account'
                             fullWidth
                             {...register('account', {required: true})}
+                            defaultValue={selectedExpense?.account || ''}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -112,6 +132,7 @@ const ExpenseDialog = () => {
                             label='Receiver'
                             fullWidth
                             {...register('receiver', {required: true})}
+                            defaultValue={selectedExpense?.receiver || ''}
                         />
                     </Grid>
                     <Grid
@@ -121,7 +142,7 @@ const ExpenseDialog = () => {
                         justifyContent={'flex-end'}
                     >
                         <Button variant='contained' type='submit' sx={{mr: 2}}>
-                            Submit
+                            {selectedExpense ? 'Save' : 'Submit'}
                         </Button>
                         <Button variant='outlined' onClick={handleClose}>
                             Close
