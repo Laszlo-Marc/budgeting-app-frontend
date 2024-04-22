@@ -117,7 +117,7 @@ const UserOverview = () => {
                         variant='contained'
                         color='primary'
                         size='large'
-                        onClick={() => navigate('/chart')}
+                        onClick={() => navigate('/users/chart')}
                     >
                         View Chart
                     </Button>

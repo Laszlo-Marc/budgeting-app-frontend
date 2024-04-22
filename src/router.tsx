@@ -2,6 +2,7 @@
 import {Suspense, lazy} from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import Layout from './components/Layout';
+import UserChart from './components/userComponents/UserChart';
 import UserLayout from './components/userComponents/UserLayout';
 
 const AppRouter = () => {
@@ -33,7 +34,7 @@ const AppRouter = () => {
                         path={'/users'}
                     />
                     <Route element={<UserDetails />} path={'/users/:id'} />
-                    <Route element={<BasicPie />} path={'/chart'} />
+                    <Route element={<UserChart />} path={'/users/chart'} />
                     <Route
                         element={
                             <Layout>
