@@ -6,13 +6,11 @@ import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Expense} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
-import {useUserStore} from '../../stores/UserStore';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {handleOpen, deleteExpense} = useExpenseStore();
+    const {handleOpen, expenses, deleteExpense} = useExpenseStore();
     const [, setIsOnline] = useState<boolean>(true);
-    const {selectedUser} = useUserStore();
     const checkInternetStatus = async () => {
         try {
             const response = await axios.get(
@@ -67,7 +65,7 @@ const Overview = () => {
     const handleDetails = (expense: Expense) => {
         navigate(`/expenses/${expense.id}`);
     };
-    const rows = selectedUser.expenses || [];
+    const rows = expenses;
 
     const columns: GridColDef<(typeof rows)[number]>[] = [
         {

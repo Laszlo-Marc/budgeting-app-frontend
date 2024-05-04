@@ -17,7 +17,7 @@ const Detail = () => {
     const params = useParams();
     useEffect(() => {
         if (params.id)
-            setUser(users.find((user) => user.id === parseInt(params.id!)));
+            setUser(users.find((user) => user.uid === parseInt(params.id!)));
     }, [params.id]);
     return (
         <div>

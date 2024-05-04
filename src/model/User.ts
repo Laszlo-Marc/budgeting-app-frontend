@@ -1,10 +1,7 @@
-import {Expense} from './Expenses';
-
 export interface User {
-    id: number;
+    uid: number;
     name: string;
     age: number;
     email: string;
     password: string;
-    expenses: Expense[];
 }

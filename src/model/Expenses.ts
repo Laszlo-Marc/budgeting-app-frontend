@@ -6,6 +6,7 @@ export interface Expense {
     description: string;
     receiver: string;
     account: string;
+    userid: number;
 }
 export enum Category {
     FOOD = 'Food',

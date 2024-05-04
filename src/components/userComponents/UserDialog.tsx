@@ -21,25 +21,23 @@ const UserDialog = () => {
             console.log('edit');
             console.log(selectedUser);
             const updatedUser = {
-                id: selectedUser.id,
+                uid: selectedUser.uid,
                 name: data.name,
                 email: data.email,
                 password: data.password,
                 age: data.age,
-                expenses: selectedUser.expenses,
             };
             reset();
             handleCloseUser();
             editUser(updatedUser);
         } else {
-            addUser({
-                id: Math.floor(Math.random() * 1000),
+            const newUser = {
                 name: data.name,
                 email: data.email,
                 password: data.password,
                 age: data.age,
-                expenses: [],
-            });
+            };
+            addUser(newUser);
             reset();
             handleCloseUser();
         }

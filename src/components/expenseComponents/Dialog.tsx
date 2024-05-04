@@ -11,6 +11,7 @@ import {
 import {SubmitHandler, useForm} from 'react-hook-form';
 import {Category} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
+import {useUserStore} from '../../stores/UserStore';
 import ReactHookFormSelect from '../ReactHookForm';
 
 interface Inputs {
@@ -25,6 +26,7 @@ interface Inputs {
 const ExpenseDialog = () => {
     const {opened, handleClose, selectedExpense, addExpense, editExpense} =
         useExpenseStore();
+    const {selectedUser} = useUserStore();
     const {register, handleSubmit, control, reset} = useForm<Inputs>({});
 
     const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -39,6 +41,7 @@ const ExpenseDialog = () => {
                 description: data.description,
                 receiver: data.receiver,
                 account: data.account,
+                userid: selectedExpense.userid,
             };
             reset();
             handleClose();
@@ -52,6 +55,7 @@ const ExpenseDialog = () => {
                 description: data.description,
                 account: data.account,
                 receiver: data.receiver,
+                userid: selectedUser.uid,
             });
             reset();
             handleClose();

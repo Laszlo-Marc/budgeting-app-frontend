@@ -8,8 +8,8 @@ interface useUserStoreProps {
     handleCloseUser: () => void;
     selectedUser: User;
     handleExpenses: (user?: User) => void;
-    addUser: (user: User) => void;
-    deleteUser: (userId: User) => void;
+    addUser: (user: unknown) => void;
+    deleteUser: (uid: number) => void;
     editUser: (user: User) => void;
     users: User[];
 }
@@ -38,36 +38,41 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     handleCloseUser: () => set({userOpened: false, selectedUser: {} as User}),
     editUser: async (user: User) => {
         try {
-            await axios.put(`http://localhost:3001/api/users/${user.id}`, user);
+            await axios.put(
+                `http://localhost:3001/api/users/${user.uid}`,
+                user,
+            );
             fetchUsers();
         } catch (error) {
-            console.error('Error editing expense', error);
+            console.error('Error editing user', error);
         }
         set((state) => ({
-            users: state.users.map((u) => (u.id === user.id ? user : u)),
+            users: state.users.map((u) => (u.uid === user.uid ? user : u)),
         }));
         fetchUsers();
     },
-    addUser: async (user: User) => {
+    addUser: async (user: unknown) => {
         try {
             await axios.post('http://localhost:3001/api/users', user);
             fetchUsers();
         } catch (error) {
             console.error('Error adding user', error);
         }
-        set((state) => ({
-            users: [...state.users, user],
-        }));
+        //set((state) => ({
+        //  users: [...state.users, user],
+        //}));
     },
-    deleteUser: async (user: User) => {
+    deleteUser: async (uid: number) => {
         try {
-            await axios.delete(`http://localhost:3001/api/users/${user.id}`);
+            await axios.delete(`http://localhost:3001/api/users/${uid}`, {
+                params: {id: uid},
+            });
             fetchUsers();
         } catch (error) {
             console.error('Error deleting user', error);
         }
         set((state) => ({
-            users: state.users.filter((u) => u.id !== user.id),
+            users: state.users.filter((u) => u.uid !== uid),
         }));
     },
 }));
