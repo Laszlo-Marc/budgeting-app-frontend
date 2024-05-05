@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box, Button, Grid} from '@mui/material';
-import {
-    DataGrid,
-    GridColDef,
-    GridEventListener,
-    useGridApiRef,
-} from '@mui/x-data-grid';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
@@ -14,11 +9,11 @@ import {useUserStore} from '../../stores/UserStore';
 
 const UserOverview = () => {
     const navigate = useNavigate();
-    const {handleOpenUser, users, deleteUser, handleExpenses} = useUserStore();
+    const {handleOpenUser, users, deleteUser, handleExpenses, fetchMoreUsers} =
+        useUserStore();
     const [, setIsOnline] = useState<boolean>(true);
-    const [rows, setRows] = useState<User[]>(users);
-    const apiRef = useGridApiRef();
     const [page, setPage] = useState(1);
+
     const checkInternetStatus = async () => {
         try {
             const response = await axios.get(
@@ -45,7 +40,7 @@ const UserOverview = () => {
         navigate(`/expenses`);
     };
 
-    const columns: GridColDef<(typeof rows)[number]>[] = [
+    const columns: GridColDef<(typeof users)[number]>[] = [
         {
             field: 'name',
             headerName: 'Name',
@@ -123,37 +118,15 @@ const UserOverview = () => {
             ),
         },
     ];
-    useEffect(() => {
-        const handleEvent: GridEventListener<'rowMouseLeave'> = async (
-            params,
-        ) => {
-            const api = apiRef.current;
-            const visibleRowCount = api.getAllRowIds().length;
-            const totalRowCount = api.getRowsCount();
-            if (
-                visibleRowCount === totalRowCount &&
-                params.id === totalRowCount - 1
-            ) {
-                try {
-                    console.log('Fetching more data...');
-                    const response = await axios.get(
-                        'http://localhost:3001/api/users',
-                        {params: {page}}, // Pass the page value as a query parameter
-                    );
-                    console.log('Fetched more data:', response.data);
-                    const newData = response.data; // Assuming response contains new data
-                    setRows((prevRows) => [...prevRows, ...newData]); // Use callback function with setRows
-                    setPage((prevPage) => prevPage + 1); // Update page using previous page state
-                    console.log('Page: ', page);
-                    console.log('New data set!');
-                    console.log('New rows:', rows);
-                } catch (error) {
-                    console.error('Error fetching more data:', error);
-                }
-            }
-        };
-        return apiRef.current.subscribeEvent('rowMouseLeave', handleEvent);
-    }, [apiRef, page]); // Include 'page' in the dependency array
+
+    const handleLoadUsers = async () => {
+        try {
+            await fetchMoreUsers(page);
+            setPage((prevPage) => prevPage + 1);
+        } catch (error) {
+            console.error('Error fetching more data:', error);
+        }
+    };
 
     return (
         <Grid container spacing={2}>
@@ -183,6 +156,15 @@ const UserOverview = () => {
                     >
                         View Chart
                     </Button>
+                    <br />
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={() => handleLoadUsers()}
+                    >
+                        See More
+                    </Button>
                 </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -196,7 +178,7 @@ const UserOverview = () => {
                     }}
                 >
                     <DataGrid
-                        rows={rows}
+                        rows={users}
                         columns={columns}
                         initialState={{
                             pagination: {
@@ -208,7 +190,6 @@ const UserOverview = () => {
                         pageSizeOptions={[10, 25, 50]}
                         disableRowSelectionOnClick
                         getRowId={(row) => row.uid}
-                        apiRef={apiRef}
                     />
                 </Box>
             </Grid>

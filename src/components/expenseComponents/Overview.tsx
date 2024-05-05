@@ -32,33 +32,6 @@ const Overview = () => {
         return () => clearInterval(interval);
     });
 
-    // const socket = new WebSocket('ws://localhost:3000');
-
-    // // Connection opened
-    // socket.addEventListener('open', () => {
-    //     socket.send('Connection established');
-    // });
-
-    // // Listen for messages
-    // socket.addEventListener('message', (event) => {
-    //     console.log('Message from server ', event.data);
-    //     if (event.data === 'refresh') {
-    //         fetchDataAndUpdateRows();
-    //     }
-    // });
-    // const sendMessage = () => {
-    //     socket.send('hello from frontend');
-    // };
-    // const fetchDataAndUpdateRows = async () => {
-    //     try {
-    //         const response = await axios.get(
-    //             'http://localhost:5050/api/foods/',
-    //         );
-    //         setRows(response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    // };
     const handleDelete = (expense: Expense) => {
         deleteExpense(expense);
     };

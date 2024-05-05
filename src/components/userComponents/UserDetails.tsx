@@ -16,8 +16,10 @@ const Detail = () => {
     const {users} = useUserStore();
     const params = useParams();
     useEffect(() => {
+        console.log(params.id);
         if (params.id)
             setUser(users.find((user) => user.uid === parseInt(params.id!)));
+        console.log(user);
     }, [params.id]);
     return (
         <div>

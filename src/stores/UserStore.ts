@@ -11,6 +11,7 @@ interface useUserStoreProps {
     addUser: (user: unknown) => void;
     deleteUser: (uid: number) => void;
     editUser: (user: User) => void;
+    fetchMoreUsers: (page: number) => void;
     users: User[];
 }
 axios.get<User[]>('http://localhost:3001/api/users').then((response) => {
@@ -32,6 +33,18 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     userOpened: false,
     users: [],
     selectedUser: {} as User,
+    fetchMoreUsers: async (page: number) => {
+        try {
+            const response = await axios.get<User[]>(
+                'http://localhost:3001/api/users',
+                {params: {page}},
+            );
+            console.log(response.data);
+            set((state) => ({users: [...state.users, ...response.data]}));
+        } catch (error) {
+            console.error('Error fetching more users', error);
+        }
+    },
     handleOpenUser: (user?: User) =>
         set({userOpened: true, selectedUser: user}),
     handleExpenses: (user?: User) => set({selectedUser: user}),
@@ -58,9 +71,6 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
         } catch (error) {
             console.error('Error adding user', error);
         }
-        //set((state) => ({
-        //  users: [...state.users, user],
-        //}));
     },
     deleteUser: async (uid: number) => {
         try {
