@@ -7,50 +7,72 @@ interface useExpenseStoreProps {
     handleOpen: (expense?: Expense) => void;
     handleClose: () => void;
     selectedExpense: Expense;
-
+    fetchMoreExpenses: (page: number, userid: number) => void;
     addExpense: (expense: Expense) => void;
     deleteExpense: (expenseId: Expense) => void;
     editExpense: (expense: Expense) => void;
     expenses: Expense[];
+    clearExpenses: () => void;
 }
-axios.get<Expense[]>('http://localhost:3001/api/expenses').then((response) => {
-    useExpenseStore.setState({expenses: response.data});
-});
-const fetchExpenses = async () => {
-    try {
-        const response = await axios.get<Expense[]>(
-            'http://localhost:3001/api/expenses',
-        );
-        useExpenseStore.setState({expenses: response.data});
-    } catch (error) {
-        console.error('Error fetching expenses', error);
-    }
-};
+// axios
+//     .get<Expense[]>('http://localhost:3001/api/expenses', {
+//     })
+//     .then((response) => {
+//         useExpenseStore.setState({expenses: response.data});
+//     });
+// const FetchExpenses = async () => {
+//     const {selectedUser} = useUserStore();
+//     try {
+//         const response = await axios.get<Expense[]>(
+//             'http://localhost:3001/api/expenses',
+//             {params: {userid: selectedUser.uid}},
+//         );
+//         useExpenseStore.setState({expenses: response.data});
+//     } catch (error) {
+//         console.error('Error fetching expenses', error);
+//     }
+// };
 
 export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     opened: false,
     expenses: [],
     selectedExpense: {} as Expense,
+    clearExpenses: () => set(() => ({expenses: []})),
     handleOpen: (expense?: Expense) =>
         set({opened: true, selectedExpense: expense}),
 
+    fetchMoreExpenses: async (page: number, userid: number) => {
+        try {
+            console.log('fetching more expenses');
+            console.log('page:', page);
+            console.log('userid:', userid);
+            const response = await axios.get<Expense[]>(
+                'http://localhost:3001/api/expenses',
+                {params: {page: page, userid: userid}},
+            );
+            set((state) => ({expenses: [...state.expenses, ...response.data]}));
+        } catch (error) {
+            console.error('Error fetching more expenses', error);
+        }
+    },
     handleClose: () => set({opened: false, selectedExpense: {} as Expense}),
     editExpense: async (expense: Expense) => {
         try {
             console.log('making request');
+            console.log(expense);
             await axios
                 .put(
-                    `http://localhost:3001/api/expenses/${expense.id}`,
+                    `http://localhost:3001/api/expenses/${expense.eid}`,
                     expense,
                 )
                 .then((response) => {
                     console.log('response:', response.data);
                 });
 
-            fetchExpenses();
+            //FetchExpenses();
             set((state) => ({
                 expenses: state.expenses.map((e) =>
-                    e.id === expense.id ? expense : e,
+                    e.eid === expense.eid ? expense : e,
                 ),
             }));
         } catch (error) {
@@ -60,7 +82,7 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     addExpense: async (expense: Expense) => {
         try {
             await axios.post('http://localhost:3001/api/expenses', expense);
-            fetchExpenses();
+            //FetchExpenses();
             set((state) => ({
                 expenses: [...state.expenses, expense],
             }));
@@ -71,14 +93,14 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     deleteExpense: async (expense: Expense) => {
         try {
             await axios.delete(
-                `http://localhost:3001/api/expenses/${expense.id}`,
+                `http://localhost:3001/api/expenses/${expense.eid}`,
             );
-            fetchExpenses();
+            //FetchExpenses();
         } catch (error) {
             console.error('Error deleting expense', error);
         }
         set((state) => ({
-            expenses: state.expenses.filter((e) => e.id !== expense.id),
+            expenses: state.expenses.filter((e) => e.eid !== expense.eid),
         }));
     },
 }));

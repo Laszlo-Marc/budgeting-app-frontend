@@ -18,7 +18,9 @@ const Detail = () => {
     useEffect(() => {
         if (params.id)
             setExpense(
-                expenses.find((expense) => expense.id === parseInt(params.id!)),
+                expenses.find(
+                    (expense) => expense.eid === parseInt(params.id!),
+                ),
             );
     }, [params.id]);
     return (
@@ -61,7 +63,7 @@ const Detail = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        {expense?.date?.toString()}
+                        {expense?.date?.toString().split('T')[0]}
                     </div>
                 </AccordionDetails>
             </Accordion>

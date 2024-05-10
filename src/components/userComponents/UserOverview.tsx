@@ -5,14 +5,16 @@ import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {User} from '../../model/User';
+import {useExpenseStore} from '../../stores/ExpenseStores';
 import {useUserStore} from '../../stores/UserStore';
 
 const UserOverview = () => {
     const navigate = useNavigate();
     const {handleOpenUser, users, deleteUser, handleExpenses, fetchMoreUsers} =
         useUserStore();
+    const {fetchMoreExpenses} = useExpenseStore();
     const [, setIsOnline] = useState<boolean>(true);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
 
     const checkInternetStatus = async () => {
         try {
@@ -36,6 +38,8 @@ const UserOverview = () => {
     });
 
     const handleSeeExpenses = (user: User) => {
+        console.log('Loading expenses for user:', user);
+        fetchMoreExpenses(page, user.uid);
         handleExpenses(user);
         navigate(`/expenses`);
     };

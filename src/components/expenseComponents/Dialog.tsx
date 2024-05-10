@@ -34,7 +34,7 @@ const ExpenseDialog = () => {
             console.log('edit');
             console.log(selectedExpense);
             const updatedExpense = {
-                id: selectedExpense.id,
+                eid: selectedExpense.eid,
                 category: data.category as Category,
                 amount: data.amount,
                 date: data.date.split('T')[0],
@@ -48,7 +48,7 @@ const ExpenseDialog = () => {
             editExpense(updatedExpense);
         } else {
             addExpense({
-                id: Math.floor(Math.random() * 1000),
+                eid: Math.floor(Math.random() * 1000),
                 category: data.category as Category,
                 amount: data.amount,
                 date: data.date.split('T')[0],

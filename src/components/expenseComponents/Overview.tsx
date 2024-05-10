@@ -6,11 +6,16 @@ import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Expense} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
+import {useUserStore} from '../../stores/UserStore';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {handleOpen, expenses, deleteExpense} = useExpenseStore();
+    const {handleOpen, expenses, deleteExpense, fetchMoreExpenses} =
+        useExpenseStore();
+    const {selectedUser} = useUserStore();
     const [, setIsOnline] = useState<boolean>(true);
+    const [page, setPage] = useState(0);
+    //const [isLeaving, setIsLeaving] = useState(false);
     const checkInternetStatus = async () => {
         try {
             const response = await axios.get(
@@ -36,11 +41,33 @@ const Overview = () => {
         deleteExpense(expense);
     };
     const handleDetails = (expense: Expense) => {
-        navigate(`/expenses/${expense.id}`);
+        navigate(`/expenses/${expense.eid}`);
     };
-    const rows = expenses;
 
-    const columns: GridColDef<(typeof rows)[number]>[] = [
+    const handleLoadMoreExpenses = async () => {
+        try {
+            console.log('page:', page);
+            await fetchMoreExpenses(page, selectedUser.uid);
+            setPage((prevPage) => prevPage + 1);
+        } catch (error) {
+            console.error('Error fetching more data:', error);
+        }
+    };
+    // useEffect(() => {
+    //     function handleBeforeUnload(event: BeforeUnloadEvent) {
+    //         event.preventDefault();
+    //         clearExpenses();
+    //     }
+    //     window.addEventListener('beforeunload', handleBeforeUnload, {
+    //         capture: true,
+    //     });
+    //     return () =>
+    //         window.removeEventListener('beforeunload', handleBeforeUnload, {
+    //             capture: true,
+    //         });
+    // }, [clearExpenses]);
+
+    const columns: GridColDef<(typeof expenses)[number]>[] = [
         {
             field: 'category',
             headerName: 'Category',
@@ -144,6 +171,15 @@ const Overview = () => {
                     >
                         View Chart
                     </Button>
+                    <br />
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={() => handleLoadMoreExpenses()}
+                    >
+                        See More
+                    </Button>
                 </Box>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -157,17 +193,18 @@ const Overview = () => {
                     }}
                 >
                     <DataGrid
-                        rows={rows}
+                        rows={expenses}
                         columns={columns}
                         initialState={{
                             pagination: {
                                 paginationModel: {
-                                    pageSize: 100,
+                                    pageSize: 25,
                                 },
                             },
                         }}
-                        pageSizeOptions={[100]}
+                        pageSizeOptions={[25, 50, 100]}
                         disableRowSelectionOnClick
+                        getRowId={(rows) => rows.eid}
                     />
                 </Box>
             </Grid>
