@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box, Button, Grid} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
-import axios from 'axios';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Expense} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
@@ -13,29 +12,29 @@ const Overview = () => {
     const {handleOpen, expenses, deleteExpense, fetchMoreExpenses} =
         useExpenseStore();
     const {selectedUser} = useUserStore();
-    const [, setIsOnline] = useState<boolean>(true);
-    const [page, setPage] = useState(0);
-    //const [isLeaving, setIsLeaving] = useState(false);
-    const checkInternetStatus = async () => {
-        try {
-            const response = await axios.get(
-                'http://localhost:3001/api/check-internet',
-            );
-            setIsOnline(response.data.isOnline);
-            if (!response.data.isOnline) {
-                // Alert the user that the internet connection is down
-                alert('Internet connection is down!');
-            }
-        } catch (error) {
-            setIsOnline(false); // If there's an error, assume offline
-            alert('Internet connection is down!');
-        }
-    };
-    useEffect(() => {
-        checkInternetStatus();
-        const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
-        return () => clearInterval(interval);
-    });
+    //const [, setIsOnline] = useState<boolean>(true);
+    const [page, setPage] = useState(1);
+
+    // const checkInternetStatus = async () => {
+    //     try {
+    //         const response = await axios.get(
+    //             'http://localhost:3001/api/check-internet',
+    //         );
+    //         setIsOnline(response.data.isOnline);
+    //         if (!response.data.isOnline) {
+    //             // Alert the user that the internet connection is down
+    //             alert('Internet connection is down!');
+    //         }
+    //     } catch (error) {
+    //         setIsOnline(false); // If there's an error, assume offline
+    //         alert('Internet connection is down!');
+    //     }
+    // };
+    // useEffect(() => {
+    //     checkInternetStatus();
+    //     const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
+    //     return () => clearInterval(interval);
+    // });
 
     const handleDelete = (expense: Expense) => {
         deleteExpense(expense);
@@ -53,19 +52,6 @@ const Overview = () => {
             console.error('Error fetching more data:', error);
         }
     };
-    // useEffect(() => {
-    //     function handleBeforeUnload(event: BeforeUnloadEvent) {
-    //         event.preventDefault();
-    //         clearExpenses();
-    //     }
-    //     window.addEventListener('beforeunload', handleBeforeUnload, {
-    //         capture: true,
-    //     });
-    //     return () =>
-    //         window.removeEventListener('beforeunload', handleBeforeUnload, {
-    //             capture: true,
-    //         });
-    // }, [clearExpenses]);
 
     const columns: GridColDef<(typeof expenses)[number]>[] = [
         {
@@ -205,7 +191,7 @@ const Overview = () => {
                         pageSizeOptions={[25, 50, 100]}
                         disableRowSelectionOnClick
                         getRowId={(rows) => rows.eid}
-                    />
+                    ></DataGrid>
                 </Box>
             </Grid>
         </Grid>

@@ -50,6 +50,7 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
                 'http://localhost:3001/api/expenses',
                 {params: {page: page, userid: userid}},
             );
+
             set((state) => ({expenses: [...state.expenses, ...response.data]}));
         } catch (error) {
             console.error('Error fetching more expenses', error);

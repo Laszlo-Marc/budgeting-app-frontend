@@ -24,8 +24,11 @@ const fetchUsers = async () => {
         );
         console.log(response.data);
         useUserStore.setState({users: response.data});
+        localStorage.setItem('users', JSON.stringify(response.data));
     } catch (error) {
         console.error('Error fetching users', error);
+        const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
+        useUserStore.setState({users: storedUsers});
     }
 };
 
@@ -58,11 +61,23 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             fetchUsers();
         } catch (error) {
             console.error('Error editing user', error);
+            const pendingApiCalls = JSON.parse(
+                localStorage.getItem('pendingApiCalls') || '[]',
+            );
+            pendingApiCalls.push({
+                method: 'PUT',
+                url: 'http://localhost:3001/api/users/:id',
+                data: user,
+            });
+            localStorage.setItem(
+                'pendingApiCalls',
+                JSON.stringify(pendingApiCalls),
+            );
         }
         set((state) => ({
             users: state.users.map((u) => (u.uid === user.uid ? user : u)),
         }));
-        fetchUsers();
+        //fetchUsers();
     },
     addUser: async (user: unknown) => {
         try {
@@ -70,6 +85,18 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             fetchUsers();
         } catch (error) {
             console.error('Error adding user', error);
+            const pendingApiCalls = JSON.parse(
+                localStorage.getItem('pendingApiCalls') || '[]',
+            );
+            pendingApiCalls.push({
+                method: 'POST',
+                url: 'http://localhost:3001/api/users',
+                data: user,
+            });
+            localStorage.setItem(
+                'pendingApiCalls',
+                JSON.stringify(pendingApiCalls),
+            );
         }
     },
     deleteUser: async (uid: number) => {
@@ -79,6 +106,18 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             });
             fetchUsers();
         } catch (error) {
+            const pendingApiCalls = JSON.parse(
+                localStorage.getItem('pendingApiCalls') || '[]',
+            );
+            pendingApiCalls.push({
+                method: 'DELETE',
+                url: 'http://localhost:3001/api/users/:id',
+                data: uid,
+            });
+            localStorage.setItem(
+                'pendingApiCalls',
+                JSON.stringify(pendingApiCalls),
+            );
             console.error('Error deleting user', error);
         }
         set((state) => ({

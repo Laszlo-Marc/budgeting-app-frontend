@@ -2,6 +2,8 @@
 import {Suspense, lazy} from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import Layout from './components/Layout';
+import SignUp from './components/registerComponents/register';
+import SignInSide from './components/signUpComponents/signIn';
 import UserChart from './components/userComponents/UserChart';
 import UserLayout from './components/userComponents/UserLayout';
 
@@ -23,8 +25,10 @@ const AppRouter = () => {
                 <Routes>
                     <Route
                         path='/'
-                        element={<Navigate replace to='/users' />}
+                        element={<Navigate replace to='/sign-in' />}
                     />
+                    <Route path='/sign-in' element={<SignInSide />} />
+                    <Route path='/register' element={<SignUp />} />
                     <Route
                         element={
                             <UserLayout>

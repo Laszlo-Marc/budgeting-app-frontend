@@ -3,8 +3,9 @@ import {Box, Button, Grid} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {User} from '../../model/User';
+import {ApiCall} from '../../model/apiCalls';
 import {useExpenseStore} from '../../stores/ExpenseStores';
 import {useUserStore} from '../../stores/UserStore';
 
@@ -12,30 +13,68 @@ const UserOverview = () => {
     const navigate = useNavigate();
     const {handleOpenUser, users, deleteUser, handleExpenses, fetchMoreUsers} =
         useUserStore();
-    const {fetchMoreExpenses} = useExpenseStore();
-    const [, setIsOnline] = useState<boolean>(true);
+    const {fetchMoreExpenses, clearExpenses} = useExpenseStore();
     const [page, setPage] = useState(0);
-
+    const location = useLocation();
+    const [isOnline, setIsOnline] = useState(true);
     const checkInternetStatus = async () => {
         try {
             const response = await axios.get(
                 'http://localhost:3001/api/check-internet',
             );
             setIsOnline(response.data.isOnline);
-            if (!response.data.isOnline) {
-                // Alert the user that the internet connection is down
-                alert('Internet connection is down!');
-            }
         } catch (error) {
             setIsOnline(false); // If there's an error, assume offline
-            alert('Internet connection is down!');
+            //alert('Internet connection is down!');
         }
     };
     useEffect(() => {
         checkInternetStatus();
-        const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
-        return () => clearInterval(interval);
+        // const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
+        //return () => clearInterval(interval);
     });
+
+    useEffect(() => {
+        if (isOnline) {
+            const pendingApiCalls = JSON.parse(
+                localStorage.getItem('pendingApiCalls') || '[]',
+            );
+            pendingApiCalls.forEach((apiCall: ApiCall) => {
+                axios({
+                    method: apiCall.method,
+                    url: apiCall.url,
+                    data: apiCall.data,
+                })
+                    .then((response) => {
+                        console.log(
+                            'API call successful:',
+                            apiCall.method,
+                            response.data,
+                        );
+                    })
+                    .catch((error) => {
+                        console.error('Error executing API call:', error);
+                    });
+            });
+            localStorage.removeItem('pendingApiCalls');
+        }
+    }, [isOnline]);
+
+    useEffect(() => {
+        return () => {
+            const targetPaths = ['/users'];
+            console.log('location:', location.pathname);
+            if (targetPaths.includes(location.pathname)) {
+                console.log('Clearing expenses');
+                clearExpenses();
+            }
+        };
+    }, []);
+
+    // useEffect(() => {
+    //     fetchMoreUsers(page);
+    //     setPage((prevPage) => prevPage + 1);
+    // }, []);
 
     const handleSeeExpenses = (user: User) => {
         console.log('Loading expenses for user:', user);
@@ -125,7 +164,7 @@ const UserOverview = () => {
 
     const handleLoadUsers = async () => {
         try {
-            await fetchMoreUsers(page);
+            fetchMoreUsers(page);
             setPage((prevPage) => prevPage + 1);
         } catch (error) {
             console.error('Error fetching more data:', error);
