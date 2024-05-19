@@ -3,6 +3,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {Box, Button, Drawer, Grid, IconButton} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {useEffect, useState} from 'react';
+import useSignOut from 'react-auth-kit/hooks/useSignOut';
 import {useNavigate} from 'react-router-dom';
 import {Expense} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
@@ -44,7 +45,9 @@ const Overview = () => {
         fetchExpenses(selectedUser.uid);
     }, []);
 
+    const signOut = useSignOut();
     const handleLogout = () => {
+        signOut();
         localStorage.removeItem('token');
         localStorage.removeItem('selectedUser');
         navigate('/sign-in');
