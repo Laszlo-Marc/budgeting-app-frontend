@@ -3,17 +3,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import * as React from 'react';
-
+import {useState} from 'react';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import {useNavigate} from 'react-router-dom';
 function Copyright(props: any) {
     return (
         <Typography
@@ -34,15 +35,59 @@ function Copyright(props: any) {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
+interface IUserData {
+    email: string;
+    password: string;
+}
 export default function SignUp() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+    let token = '';
+    const [errorMsg, setErrorMsg] = useState<string>('');
+    const sigIn = useSignIn<IUserData>();
+    const navigate = useNavigate();
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        try {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            const response = await axios.post(
+                'http://localhost:3001/api/register',
+                {
+                    name: data.get('firstName') + ' ' + data.get('lastName'),
+                    email: data.get('email'),
+                    password: data.get('password'),
+                    dob: data.get('dob'),
+                },
+            );
+            token = response.data.token;
+            console.log(response.data);
+            if (
+                sigIn({
+                    auth: {
+                        token: token,
+                        type: 'Bearer',
+                    },
+                    userState: {
+                        email: response.data.email,
+                        password: response.data.password,
+                    },
+                })
+            ) {
+                console.log('User signed in');
+                navigate('/expenses');
+            } else {
+                console.log('Erorr signing in user');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error:', error.response?.data?.message);
+                // Display error message to the user
+                setErrorMsg(
+                    error.response?.data?.message || 'An error occurred',
+                );
+            } else {
+                console.error('Error:', error);
+                setErrorMsg('An error occurred');
+            }
+        }
     };
 
     return (
@@ -63,6 +108,12 @@ export default function SignUp() {
                     <Typography component='h1' variant='h5'>
                         Sign up
                     </Typography>
+                    {errorMsg && (
+                        <Typography variant='body2' color='error'>
+                            {errorMsg}
+                        </Typography>
+                    )}
+
                     <Box
                         component='form'
                         noValidate
@@ -113,6 +164,15 @@ export default function SignUp() {
                                 />
                             </Grid>
                             <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name='dob'
+                                    type='date'
+                                    id='dob'
+                                />
+                            </Grid>
+                            {/* <Grid item xs={12}>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -122,7 +182,7 @@ export default function SignUp() {
                                     }
                                     label='I want to receive inspiration, marketing promotions and updates via email.'
                                 />
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                         <Button
                             type='submit'

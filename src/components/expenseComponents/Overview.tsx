@@ -1,44 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Box, Button, Grid} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import {Box, Button, Drawer, Grid, IconButton} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Expense} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
-import {useUserStore} from '../../stores/UserStore';
 
 const Overview = () => {
     const navigate = useNavigate();
-    const {handleOpen, expenses, deleteExpense, fetchMoreExpenses} =
-        useExpenseStore();
-    const {selectedUser} = useUserStore();
-    //const [, setIsOnline] = useState<boolean>(true);
-    const [page, setPage] = useState(1);
+    const {
+        handleOpen,
+        expenses,
+        deleteExpense,
+        fetchMoreExpenses,
+        fetchExpenses,
+    } = useExpenseStore();
+    const [page, setPage] = useState(0);
+    const storedUser = localStorage.getItem('selectedUser');
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
-    // const checkInternetStatus = async () => {
-    //     try {
-    //         const response = await axios.get(
-    //             'http://localhost:3001/api/check-internet',
-    //         );
-    //         setIsOnline(response.data.isOnline);
-    //         if (!response.data.isOnline) {
-    //             // Alert the user that the internet connection is down
-    //             alert('Internet connection is down!');
-    //         }
-    //     } catch (error) {
-    //         setIsOnline(false); // If there's an error, assume offline
-    //         alert('Internet connection is down!');
-    //     }
-    // };
-    // useEffect(() => {
-    //     checkInternetStatus();
-    //     const interval = setInterval(checkInternetStatus, 5000); // Check every 5 seconds
-    //     return () => clearInterval(interval);
-    // });
+    const selectedUser = storedUser ? JSON.parse(storedUser) : null;
 
     const handleDelete = (expense: Expense) => {
         deleteExpense(expense);
     };
+
     const handleDetails = (expense: Expense) => {
         navigate(`/expenses/${expense.eid}`);
     };
@@ -51,6 +38,16 @@ const Overview = () => {
         } catch (error) {
             console.error('Error fetching more data:', error);
         }
+    };
+
+    useEffect(() => {
+        fetchExpenses(selectedUser.uid);
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('selectedUser');
+        navigate('/sign-in');
     };
 
     const columns: GridColDef<(typeof expenses)[number]>[] = [
@@ -83,8 +80,6 @@ const Overview = () => {
             field: 'edit',
             headerName: 'Edit',
             width: 100,
-            display: 'flex',
-            align: 'right',
             renderCell: (params) => (
                 <Button
                     variant='contained'
@@ -99,8 +94,6 @@ const Overview = () => {
             field: 'delete',
             headerName: 'Delete',
             width: 100,
-            display: 'flex',
-            align: 'right',
             renderCell: (params) => (
                 <Button
                     variant='contained'
@@ -115,8 +108,6 @@ const Overview = () => {
             field: 'details',
             headerName: 'Details',
             width: 100,
-            display: 'flex',
-            align: 'right',
             renderCell: (params) => (
                 <Button
                     variant='contained'
@@ -130,14 +121,48 @@ const Overview = () => {
     ];
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
+        <Box sx={{display: 'flex', height: '100vh'}}>
+            <Box sx={{flexGrow: 1, padding: 2}}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <Box
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <DataGrid
+                                rows={expenses}
+                                columns={columns}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 25,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[25, 50, 100]}
+                                disableRowSelectionOnClick
+                                getRowId={(rows) => rows.eid}
+                            ></DataGrid>
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Box>
+            <Drawer
+                anchor='right'
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+            >
                 <Box
                     sx={{
+                        width: 250,
+                        padding: 2,
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        justifyContent: 'flex-start',
                     }}
                 >
                     <Button
@@ -145,56 +170,46 @@ const Overview = () => {
                         color='primary'
                         size='large'
                         onClick={() => handleOpen()}
+                        sx={{marginBottom: 2}}
                     >
                         Add Expense
                     </Button>
-                    <br />
                     <Button
                         variant='contained'
                         color='primary'
                         size='large'
                         onClick={() => navigate('/chart')}
+                        sx={{marginBottom: 2}}
                     >
                         View Chart
                     </Button>
-                    <br />
                     <Button
                         variant='contained'
                         color='primary'
                         size='large'
                         onClick={() => handleLoadMoreExpenses()}
+                        sx={{marginBottom: 2}}
                     >
                         See More
                     </Button>
+                    <Button
+                        variant='contained'
+                        color='secondary'
+                        size='large'
+                        onClick={handleLogout}
+                        sx={{marginTop: 'auto'}}
+                    >
+                        Logout
+                    </Button>
                 </Box>
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <Box
-                    sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <DataGrid
-                        rows={expenses}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: 25,
-                                },
-                            },
-                        }}
-                        pageSizeOptions={[25, 50, 100]}
-                        disableRowSelectionOnClick
-                        getRowId={(rows) => rows.eid}
-                    ></DataGrid>
-                </Box>
-            </Grid>
-        </Grid>
+            </Drawer>
+            <IconButton
+                sx={{position: 'fixed', right: 16, top: 16}}
+                onClick={() => setDrawerOpen(true)}
+            >
+                <MenuIcon />
+            </IconButton>
+        </Box>
     );
 };
 

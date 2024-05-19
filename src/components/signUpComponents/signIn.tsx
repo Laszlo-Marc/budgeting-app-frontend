@@ -12,7 +12,13 @@ import Paper from '@mui/material/Paper';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import * as React from 'react';
+import {useEffect, useState} from 'react';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
+import {useNavigate} from 'react-router-dom';
+import {useExpenseStore} from '../../stores/ExpenseStores';
+import {useUserStore} from '../../stores/UserStore';
 
 function Copyright(props: any) {
     return (
@@ -34,17 +40,83 @@ function Copyright(props: any) {
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
+interface IUserData {
+    email: string;
+    password: string;
+}
 export default function SignInSide() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const signIn = useSignIn<IUserData>();
+    const navigate = useNavigate();
+    const {handleExpenses, selectedUser} = useUserStore();
+    const {clearExpenses} = useExpenseStore();
+    const [errorMsg, setErrorMsg] = useState<string>('');
+    const {token, setToken} = useUserStore();
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
+        try {
+            const response = await axios.put(
+                'http://localhost:3001/api/login',
+                {
+                    email: data.get('email'),
+                    password: data.get('password'),
+                },
+            );
+            setToken(response.data.token);
+            console.log(token);
+            if (
+                signIn({
+                    auth: {
+                        token: token,
+                        type: 'Bearer',
+                    },
+                    userState: {
+                        email: response.data.email,
+                        password: response.data.password,
+                    },
+                })
+            ) {
+                const user = {
+                    uid: response.data.user.uid,
+                    age: response.data.user.age,
+                    name: response.data.user.name,
+                    password: response.data.user.password,
+                    email: response.data.user.email,
+                };
+                console.log(user);
+                handleExpenses(user);
 
+                navigate('/expenses');
+                console.log('Logged in');
+                console.log(response.data);
+                console.log(selectedUser);
+            } else {
+                console.log('Erorr');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Error:', error.response?.data?.message);
+                // Display error message to the user
+                setErrorMsg(
+                    error.response?.data?.message || 'An error occurred',
+                );
+            } else {
+                console.error('Error:', error);
+                setErrorMsg('An error occurred');
+            }
+        }
+    };
+    useEffect(() => {
+        return () => {
+            const targetPaths = ['/sign-in'];
+            console.log('location:', location.pathname);
+            if (targetPaths.includes(location.pathname)) {
+                console.log('Clearing expenses');
+                clearExpenses();
+                localStorage.removeItem('selectedUser');
+            }
+        };
+    }, []);
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component='main' sx={{height: '100vh'}}>
@@ -90,6 +162,13 @@ export default function SignInSide() {
                         <Typography component='h1' variant='h5'>
                             Sign in
                         </Typography>
+                        {errorMsg && (
+                            <Typography variant='body2' color='error'>
+                                {errorMsg}
+                                <br />
+                                <br />
+                            </Typography>
+                        )}
                         <Box
                             component='form'
                             noValidate

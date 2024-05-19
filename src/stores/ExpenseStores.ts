@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {create} from 'zustand';
-import {Expense} from '../model/Expenses';
+import { create } from 'zustand';
+import { Expense } from '../model/Expenses';
 
 interface useExpenseStoreProps {
     opened: boolean;
@@ -8,10 +8,12 @@ interface useExpenseStoreProps {
     handleClose: () => void;
     selectedExpense: Expense;
     fetchMoreExpenses: (page: number, userid: number) => void;
+    fetchExpenses: (userid:number) => void;
     addExpense: (expense: Expense) => void;
     deleteExpense: (expenseId: Expense) => void;
     editExpense: (expense: Expense) => void;
     expenses: Expense[];
+    setExpenses: (expenses: Expense[]) => void;
     clearExpenses: () => void;
 }
 // axios
@@ -37,12 +39,24 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     opened: false,
     expenses: [],
     selectedExpense: {} as Expense,
+    setExpenses: (expenses: Expense[]) => set({expenses}),
     clearExpenses: () => set(() => ({expenses: []})),
     handleOpen: (expense?: Expense) =>
         set({opened: true, selectedExpense: expense}),
+    fetchExpenses : async (userid:number) => {
+            try {
+                const response = await axios.get<Expense[]>(
+                    'http://localhost:3001/api/expenses',
+                    {params: {userid: userid}},
+                );
+                useExpenseStore.setState({expenses: response.data});
+            } catch (error) {
+                console.error('Error fetching expenses', error);
+            }
+        },
 
     fetchMoreExpenses: async (page: number, userid: number) => {
-        try {
+        try { 
             console.log('fetching more expenses');
             console.log('page:', page);
             console.log('userid:', userid);

@@ -1,11 +1,12 @@
-import {PieChart, pieArcLabelClasses} from '@mui/x-charts/PieChart';
+import {Box} from '@mui/material';
+import {PieChart} from '@mui/x-charts/PieChart';
 import {Category} from '../../model/Expenses';
 import {useExpenseStore} from '../../stores/ExpenseStores';
 
 const BasicPie = () => {
-    function CalculateTotal(category: Category) {
-        const {expenses} = useExpenseStore();
+    const {expenses} = useExpenseStore();
 
+    function calculateTotal(category: Category) {
         const total = expenses.reduce((acc, curr) => {
             if (curr.category === category) {
                 return acc + curr.amount;
@@ -14,60 +15,50 @@ const BasicPie = () => {
         }, 0);
         return total;
     }
+
     const data = [
-        {
-            id: 0,
-            value: CalculateTotal(Category.FOOD) ?? 0,
-            label: 'FOOD',
-        },
+        {id: 0, value: calculateTotal(Category.FOOD), label: 'FOOD'},
         {
             id: 1,
-            value: CalculateTotal(Category.TRANSPORTATION) ?? 0,
+            value: calculateTotal(Category.TRANSPORTATION),
             label: 'TRANSPORTATION',
         },
         {
             id: 2,
-            value: CalculateTotal(Category.ENTERTAIMENT) ?? 0,
+            value: calculateTotal(Category.ENTERTAIMENT),
             label: 'ENTERTAINMENT',
         },
-        {
-            id: 3,
-            value: CalculateTotal(Category.SERVICES) ?? 0,
-            label: 'SERVICES',
-        },
-        {
-            id: 4,
-            value: CalculateTotal(Category.HEALTH) ?? 0,
-            label: 'HEALTH',
-        },
-        {
-            id: 5,
-            value: CalculateTotal(Category.OTHER) ?? 0,
-            label: 'OTHER',
-        },
+        {id: 3, value: calculateTotal(Category.SERVICES), label: 'SERVICES'},
+        {id: 4, value: calculateTotal(Category.HEALTH), label: 'HEALTH'},
+        {id: 5, value: calculateTotal(Category.OTHER), label: 'OTHER'},
     ];
-    const size = {
-        width: 400,
-        height: 400,
-    };
 
     return (
-        <PieChart
-            series={[
-                {
-                    arcLabel: (item) => `${item.label} (${item.value})`,
-                    arcLabelMinAngle: 45,
-                    data,
-                },
-            ]}
+        <Box
             sx={{
-                [`& .${pieArcLabelClasses.root}`]: {
-                    fill: 'white',
-                    fontWeight: 'bold',
-                },
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+
+                height: '100vh',
             }}
-            {...size}
-        />
+        >
+            <PieChart
+                series={[
+                    {
+                        data,
+                        highlightScope: {faded: 'global', highlighted: 'item'},
+                        faded: {
+                            innerRadius: 30,
+                            additionalRadius: -30,
+                            color: 'gray',
+                        },
+                    },
+                ]}
+                height={500}
+            />
+        </Box>
     );
 };
 

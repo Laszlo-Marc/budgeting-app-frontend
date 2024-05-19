@@ -7,6 +7,8 @@ interface useUserStoreProps {
     handleOpenUser: (user?: User) => void;
     handleCloseUser: () => void;
     selectedUser: User;
+    token: string;
+    setToken: (token: string) => void;
     handleExpenses: (user?: User) => void;
     addUser: (user: unknown) => void;
     deleteUser: (uid: number) => void;
@@ -14,9 +16,7 @@ interface useUserStoreProps {
     fetchMoreUsers: (page: number) => void;
     users: User[];
 }
-axios.get<User[]>('http://localhost:3001/api/users').then((response) => {
-    useUserStore.setState({users: response.data});
-});
+
 const fetchUsers = async () => {
     try {
         const response = await axios.get<User[]>(
@@ -35,7 +35,9 @@ const fetchUsers = async () => {
 export const useUserStore = create<useUserStoreProps>((set) => ({
     userOpened: false,
     users: [],
-    selectedUser: {} as User,
+    token: '',
+    setToken: (token: string) => set({token}),
+    selectedUser: JSON.parse(localStorage.getItem('selectedUser') || '{}'),
     fetchMoreUsers: async (page: number) => {
         try {
             const response = await axios.get<User[]>(
@@ -50,7 +52,10 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     },
     handleOpenUser: (user?: User) =>
         set({userOpened: true, selectedUser: user}),
-    handleExpenses: (user?: User) => set({selectedUser: user}),
+    handleExpenses: (user?: User) => {
+        set({selectedUser: user});
+        localStorage.setItem('selectedUser', JSON.stringify(user));
+    },
     handleCloseUser: () => set({userOpened: false, selectedUser: {} as User}),
     editUser: async (user: User) => {
         try {
