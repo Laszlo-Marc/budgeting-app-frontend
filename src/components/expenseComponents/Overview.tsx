@@ -23,7 +23,25 @@ const Overview = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const selectedUser = storedUser ? JSON.parse(storedUser) : null;
+    const [loggedInTime] = useState(Date.now()); // Capture login time
 
+    const tokenLifetime = 60 * 60 * 1000; // Example token lifetime in milliseconds (1 hour)
+    const bufferTime = 60 * 5000; // Buffer time before token expiration (5 minutes)
+    const logoutThreshold = tokenLifetime - bufferTime; // Time after which to trigger logout
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const elapsedTime = Date.now() - loggedInTime;
+            if (elapsedTime >= logoutThreshold) {
+                signOut(); // Trigger logout
+                localStorage.removeItem('token');
+                localStorage.removeItem('selectedUser');
+                navigate('/sign-in');
+            }
+        }, 5000); // Check every 5 seconds
+
+        return () => clearInterval(intervalId); // Cleanup on unmount
+    }, []);
     const handleDelete = (expense: Expense) => {
         deleteExpense(expense);
     };

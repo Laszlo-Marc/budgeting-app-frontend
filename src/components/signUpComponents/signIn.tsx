@@ -64,7 +64,7 @@ export default function SignInSide() {
             );
             const token = response.data.token;
             localStorage.setItem('token', token);
-
+            console.log(response.data.token.exp);
             if (
                 signIn({
                     auth: {
