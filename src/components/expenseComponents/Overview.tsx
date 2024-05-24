@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MenuIcon from '@mui/icons-material/Menu';
 import {Box, Button, Drawer, Grid, IconButton} from '@mui/material';

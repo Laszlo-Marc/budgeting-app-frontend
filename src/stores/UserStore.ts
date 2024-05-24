@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {create} from 'zustand';
-import {User} from '../model/User';
+import { create } from 'zustand';
+import { User } from '../model/User';
 
 interface useUserStoreProps {
     userOpened: boolean;
@@ -9,6 +9,7 @@ interface useUserStoreProps {
     selectedUser: User;
     token: string;
     setToken: (token: string) => void;
+    
     handleExpenses: (user?: User) => void;
     addUser: (user: unknown) => void;
     deleteUser: (uid: number) => void;

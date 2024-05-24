@@ -49,7 +49,7 @@ export default function SignUp() {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
             const response = await axios.post(
-                'http://localhost:3001/api/register',
+                'https://budgeting-app-backend-bmfh.onrender.com/api/register',
                 {
                     name: data.get('firstName') + ' ' + data.get('lastName'),
                     email: data.get('email'),

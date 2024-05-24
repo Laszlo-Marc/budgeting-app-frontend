@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { create } from 'zustand';
-import { Expense } from '../model/Expenses';
+import {create} from 'zustand';
+import {Expense} from '../model/Expenses';
 
 interface useExpenseStoreProps {
     opened: boolean;
@@ -8,7 +8,7 @@ interface useExpenseStoreProps {
     handleClose: () => void;
     selectedExpense: Expense;
     fetchMoreExpenses: (page: number, userid: number) => void;
-    fetchExpenses: (userid:number) => void;
+    fetchExpenses: (userid: number) => void;
     addExpense: (expense: Expense) => void;
     deleteExpense: (expenseId: Expense) => void;
     editExpense: (expense: Expense) => void;
@@ -17,7 +17,7 @@ interface useExpenseStoreProps {
     clearExpenses: () => void;
 }
 // axios
-//     .get<Expense[]>('http://localhost:3001/api/expenses', {
+//     .get<Expense[]>('https://budgeting-app-backend-bmfh.onrender.com/api/expenses', {
 //     })
 //     .then((response) => {
 //         useExpenseStore.setState({expenses: response.data});
@@ -26,7 +26,7 @@ interface useExpenseStoreProps {
 //     const {selectedUser} = useUserStore();
 //     try {
 //         const response = await axios.get<Expense[]>(
-//             'http://localhost:3001/api/expenses',
+//             'https://budgeting-app-backend-bmfh.onrender.com/api/expenses',
 //             {params: {userid: selectedUser.uid}},
 //         );
 //         useExpenseStore.setState({expenses: response.data});
@@ -43,25 +43,25 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     clearExpenses: () => set(() => ({expenses: []})),
     handleOpen: (expense?: Expense) =>
         set({opened: true, selectedExpense: expense}),
-    fetchExpenses : async (userid:number) => {
-            try {
-                const response = await axios.get<Expense[]>(
-                    'http://localhost:3001/api/expenses',
-                    {params: {userid: userid}},
-                );
-                useExpenseStore.setState({expenses: response.data});
-            } catch (error) {
-                console.error('Error fetching expenses', error);
-            }
-        },
+    fetchExpenses: async (userid: number) => {
+        try {
+            const response = await axios.get<Expense[]>(
+                'https://budgeting-app-backend-bmfh.onrender.com/api/expenses',
+                {params: {userid: userid}},
+            );
+            useExpenseStore.setState({expenses: response.data});
+        } catch (error) {
+            console.error('Error fetching expenses', error);
+        }
+    },
 
     fetchMoreExpenses: async (page: number, userid: number) => {
-        try { 
+        try {
             console.log('fetching more expenses');
             console.log('page:', page);
             console.log('userid:', userid);
             const response = await axios.get<Expense[]>(
-                'http://localhost:3001/api/expenses',
+                'https://budgeting-app-backend-bmfh.onrender.com/api/expenses',
                 {params: {page: page, userid: userid}},
             );
 
@@ -77,7 +77,7 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
             console.log(expense);
             await axios
                 .put(
-                    `http://localhost:3001/api/expenses/${expense.eid}`,
+                    `https://budgeting-app-backend-bmfh.onrender.com/api/expenses/${expense.eid}`,
                     expense,
                 )
                 .then((response) => {
@@ -96,7 +96,10 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     },
     addExpense: async (expense: Expense) => {
         try {
-            await axios.post('http://localhost:3001/api/expenses', expense);
+            await axios.post(
+                'https://budgeting-app-backend-bmfh.onrender.com/api/expenses',
+                expense,
+            );
             //FetchExpenses();
             set((state) => ({
                 expenses: [...state.expenses, expense],
@@ -108,7 +111,7 @@ export const useExpenseStore = create<useExpenseStoreProps>((set) => ({
     deleteExpense: async (expense: Expense) => {
         try {
             await axios.delete(
-                `http://localhost:3001/api/expenses/${expense.eid}`,
+                `https://budgeting-app-backend-bmfh.onrender.com/api/expenses/${expense.eid}`,
             );
             //FetchExpenses();
         } catch (error) {

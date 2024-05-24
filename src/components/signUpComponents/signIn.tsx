@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
@@ -50,20 +51,20 @@ export default function SignInSide() {
     const {handleExpenses, selectedUser} = useUserStore();
     const {clearExpenses} = useExpenseStore();
     const [errorMsg, setErrorMsg] = useState<string>('');
-    const {token, setToken} = useUserStore();
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         try {
             const response = await axios.put(
-                'http://localhost:3001/api/login',
+                'https://budgeting-app-backend-bmfh.onrender.com/api/login',
                 {
                     email: data.get('email'),
                     password: data.get('password'),
                 },
             );
-            setToken(response.data.token);
-            console.log(token);
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+
             if (
                 signIn({
                     auth: {
@@ -83,6 +84,7 @@ export default function SignInSide() {
                     password: response.data.user.password,
                     email: response.data.user.email,
                 };
+                localStorage.setItem('selectedUser', JSON.stringify(user));
                 console.log(user);
                 handleExpenses(user);
 
@@ -110,10 +112,15 @@ export default function SignInSide() {
         return () => {
             const targetPaths = ['/sign-in'];
             console.log('location:', location.pathname);
-            if (targetPaths.includes(location.pathname)) {
+            if (
+                targetPaths.includes(location.pathname) &&
+                localStorage.getItem('token') == null
+            ) {
                 console.log('Clearing expenses');
                 clearExpenses();
                 localStorage.removeItem('selectedUser');
+            } else {
+                navigate('/expenses');
             }
         };
     }, []);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Box, Button, Grid} from '@mui/material';
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
