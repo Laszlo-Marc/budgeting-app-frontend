@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { create } from 'zustand';
-import { User } from '../model/User';
+import {create} from 'zustand';
+import {User} from '../model/User';
 
 interface useUserStoreProps {
     userOpened: boolean;
@@ -9,7 +9,7 @@ interface useUserStoreProps {
     selectedUser: User;
     token: string;
     setToken: (token: string) => void;
-    
+
     handleExpenses: (user?: User) => void;
     addUser: (user: unknown) => void;
     deleteUser: (uid: number) => void;
@@ -21,7 +21,7 @@ interface useUserStoreProps {
 const fetchUsers = async () => {
     try {
         const response = await axios.get<User[]>(
-            'http://localhost:3001/api/users',
+            'https://budgeting-app-backend-bmfh.onrender.com/api/users',
         );
         console.log(response.data);
         useUserStore.setState({users: response.data});
@@ -42,7 +42,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     fetchMoreUsers: async (page: number) => {
         try {
             const response = await axios.get<User[]>(
-                'http://localhost:3001/api/users',
+                'https://budgeting-app-backend-bmfh.onrender.com/api/users',
                 {params: {page}},
             );
             console.log(response.data);
@@ -61,7 +61,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     editUser: async (user: User) => {
         try {
             await axios.put(
-                `http://localhost:3001/api/users/${user.uid}`,
+                `https://budgeting-app-backend-bmfh.onrender.com/api/users/${user.uid}`,
                 user,
             );
             fetchUsers();
@@ -72,7 +72,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             );
             pendingApiCalls.push({
                 method: 'PUT',
-                url: 'http://localhost:3001/api/users/:id',
+                url: 'https://budgeting-app-backend-bmfh.onrender.com/api/users/:id',
                 data: user,
             });
             localStorage.setItem(
@@ -87,7 +87,10 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     },
     addUser: async (user: unknown) => {
         try {
-            await axios.post('http://localhost:3001/api/users', user);
+            await axios.post(
+                'https://budgeting-app-backend-bmfh.onrender.com/api/users',
+                user,
+            );
             fetchUsers();
         } catch (error) {
             console.error('Error adding user', error);
@@ -96,7 +99,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             );
             pendingApiCalls.push({
                 method: 'POST',
-                url: 'http://localhost:3001/api/users',
+                url: 'https://budgeting-app-backend-bmfh.onrender.com/api/users',
                 data: user,
             });
             localStorage.setItem(
@@ -107,9 +110,12 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     },
     deleteUser: async (uid: number) => {
         try {
-            await axios.delete(`http://localhost:3001/api/users/${uid}`, {
-                params: {id: uid},
-            });
+            await axios.delete(
+                `https://budgeting-app-backend-bmfh.onrender.com/api/users/${uid}`,
+                {
+                    params: {id: uid},
+                },
+            );
             fetchUsers();
         } catch (error) {
             const pendingApiCalls = JSON.parse(
@@ -117,7 +123,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             );
             pendingApiCalls.push({
                 method: 'DELETE',
-                url: 'http://localhost:3001/api/users/:id',
+                url: 'https://budgeting-app-backend-bmfh.onrender.com/api/users/:id',
                 data: uid,
             });
             localStorage.setItem(
