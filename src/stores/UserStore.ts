@@ -21,7 +21,7 @@ interface useUserStoreProps {
 const fetchUsers = async () => {
     try {
         const response = await axios.get<User[]>(
-            'https://budgeting-app-backend-bmfh.onrender.com/api/users',
+            'http://localhost:3001/api/users',
         );
         console.log(response.data);
         useUserStore.setState({users: response.data});
@@ -42,7 +42,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     fetchMoreUsers: async (page: number) => {
         try {
             const response = await axios.get<User[]>(
-                'https://budgeting-app-backend-bmfh.onrender.com/api/users',
+                'http://localhost:3001/api/users',
                 {params: {page}},
             );
             console.log(response.data);
@@ -87,10 +87,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     },
     addUser: async (user: unknown) => {
         try {
-            await axios.post(
-                'https://budgeting-app-backend-bmfh.onrender.com/api/users',
-                user,
-            );
+            await axios.post('http://localhost:3001/api/users', user);
             fetchUsers();
         } catch (error) {
             console.error('Error adding user', error);
@@ -99,7 +96,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             );
             pendingApiCalls.push({
                 method: 'POST',
-                url: 'https://budgeting-app-backend-bmfh.onrender.com/api/users',
+                url: 'http://localhost:3001/api/users',
                 data: user,
             });
             localStorage.setItem(
@@ -110,12 +107,9 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
     },
     deleteUser: async (uid: number) => {
         try {
-            await axios.delete(
-                `https://budgeting-app-backend-bmfh.onrender.com/api/users/${uid}`,
-                {
-                    params: {id: uid},
-                },
-            );
+            await axios.delete(`http://localhost:3001/api/users/${uid}`, {
+                params: {id: uid},
+            });
             fetchUsers();
         } catch (error) {
             const pendingApiCalls = JSON.parse(
@@ -123,7 +117,7 @@ export const useUserStore = create<useUserStoreProps>((set) => ({
             );
             pendingApiCalls.push({
                 method: 'DELETE',
-                url: 'https://budgeting-app-backend-bmfh.onrender.com/api/users/:id',
+                url: 'http://localhost:3001/api/users/:id',
                 data: uid,
             });
             localStorage.setItem(

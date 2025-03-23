@@ -7,14 +7,14 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 function Copyright(props: any) {
     return (
         <Typography
@@ -49,7 +49,7 @@ export default function SignUp() {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
             const response = await axios.post(
-                'https://budgeting-app-backend-bmfh.onrender.com/api/register',
+                'http://localhost:3001/api/register',
                 {
                     name: data.get('firstName') + ' ' + data.get('lastName'),
                     email: data.get('email'),

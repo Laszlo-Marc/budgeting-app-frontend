@@ -18,9 +18,9 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import {useNavigate} from 'react-router-dom';
+import sigImg from '../../assets/images/signin.jpg';
 import {useExpenseStore} from '../../stores/ExpenseStores';
 import {useUserStore} from '../../stores/UserStore';
-
 function Copyright(props: any) {
     return (
         <Typography
@@ -56,7 +56,7 @@ export default function SignInSide() {
         const data = new FormData(event.currentTarget);
         try {
             const response = await axios.put(
-                'https://budgeting-app-backend-bmfh.onrender.com/login',
+                'http://localhost:3001/api/login',
                 {
                     email: data.get('email'),
                     password: data.get('password'),
@@ -134,8 +134,7 @@ export default function SignInSide() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage:
-                            'url(https://plus.unsplash.com/premium_photo-1681487916420-8f50a06eb60e?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bG9naW4lMjBwYWdlfGVufDB8fDB8fHww)',
+                        backgroundImage: `url(${sigImg})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light'
@@ -145,6 +144,7 @@ export default function SignInSide() {
                         backgroundPosition: 'center',
                     }}
                 />
+
                 <Grid
                     item
                     xs={12}
